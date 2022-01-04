@@ -1,0 +1,1893 @@
+{
+    "basePath": "/santaba/rest",
+    "definitions": {
+        "AwsAccountTestResult": {
+            "properties": {
+                "detailLink": {
+                    "type": "string"
+                },
+                "nonPermissionErrors": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                },
+                "noPermissionServices": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                }
+            },
+            "type": "object"
+        },
+        "AwsExternalId": {
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "externalId": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "AzureAccountTestResult": {
+            "properties": {
+                "detailLink": {
+                    "readOnly": true,
+                    "type": "object"
+                },
+                "noPermissionServices": {
+                    "readOnly": true,
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "CloudAccount": {
+            "properties": {
+                "accountId": {
+                    "description": "LogicMoitor's Account ID",
+                    "type": "string"
+                },
+                "assumedRoleArn": {
+                    "description": "ARN of the role created for LogicMonitor to use while monitoring AWS",
+                    "type": "string"
+                },
+                "billingBucketName": {
+                    "description": "S3 bucket name that houses AWS billing info",
+                    "type": "string"
+                },
+                "billingPathPrefix": {
+                    "description": "Path to billing info in billing bucket",
+                    "type": "string"
+                },
+                "collectorDescription": {
+                    "description": "Description of the collector assigned to this group",
+                    "type": "string"
+                },
+                "collectorId": {
+                    "description": "ID of the collector assignned to this group",
+                    "type": "integer"
+                },
+                "externalId": {
+                    "description": "External ID provide by LM for the creation of the assumed role in AWS",
+                    "type": "string"
+                },
+                "schedule": {
+                    "description": "NetScan update schedule",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Type of cloud account",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assumedRoleArn",
+                "externalId",
+                "schedule"
+            ],
+            "type": "object"
+        },
+        "CloudAccountExtra": {
+            "properties": {
+                "account": {
+                    "$ref": "#/definitions/CloudAccount",
+                    "description": "cloud account information"
+                },
+                "default": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "default settings"
+                },
+                "devices": {
+                    "$ref": "#/definitions/CloudDevice",
+                    "description": "Cloud devices to monitor in the group",
+                    "x-omitempty": true
+                },
+                "services": {
+                    "$ref": "#/definitions/CloudServices",
+                    "description": "Cloud account services to monitor"
+                }
+            },
+            "required": [
+                "account",
+                "default",
+                "services"
+            ],
+            "type": "object"
+        },
+        "CloudCollectorConfig": {
+            "properties": {
+                "appliesTo": {
+                    "description": "AppliesTo expression to match or filter device",
+                    "type": "string"
+                },
+                "autoBalancedCollectorGroupId": {
+                    "description": "Auto balanced collector group id assigned to ec2 or azure vm",
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "collectorId": {
+                    "description": "Normal collector ID assigned to ec2 or azure vm",
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "priority": {
+                    "description": "Collector match priority, smaller value has higher priority",
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "usePublicIP": {
+                    "description": "Use cloud device public ip or not",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "appliesTo",
+                "collectorId",
+                "priority"
+            ],
+            "type": "object"
+        },
+        "CloudDevice": {
+            "properties": {
+                "deviceType": {
+                    "description": "Cloud device type (2 for AWS Deivce)",
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "requiredProps": {
+                    "description": "Required device properties",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                }
+            },
+            "required": [
+                "deviceType",
+                "requiredProps"
+            ],
+            "type": "object"
+        },
+        "CloudNormalCollectorConfig": {
+            "properties": {
+                "collectors": {
+                    "description": "Cloud device type (2 for AWS Deivce)",
+                    "items": {
+                        "$ref": "#/definitions/CloudCollectorConfig"
+                    },
+                    "type": "array",
+                    "x-omitempty": true
+                },
+                "enabled": {
+                    "description": "If the normal collector config is enabled",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "enabled"
+            ],
+            "type": "object"
+        },
+        "CloudServices": {
+            "properties": {
+                "APIGATEWAY": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "APIGATEWAY monitoring settings",
+                    "x-omitempty": true
+                },
+                "APPLICATIONELB": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "APPLICATIONELB monitoring settings",
+                    "x-omitempty": true
+                },
+                "APPSTREAM": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "APPSTREAM monitoring settings",
+                    "x-omitempty": true
+                },
+                "ATHENA": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "ATHENA monitoring settings",
+                    "x-omitempty": true
+                },
+                "AUTOSCALING": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "AUTOSCALING monitoring settings",
+                    "x-omitempty": true
+                },
+                "CLOUDFRONT": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "CLOUDFRONT monitoring settings",
+                    "x-omitempty": true
+                },
+                "CLOUDSEARCH": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "CLOUDSEARCH monitoring settings",
+                    "x-omitempty": true
+                },
+                "CODEBUILD": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "CODEBUILD monitoring settings",
+                    "x-omitempty": true
+                },
+                "COGNITO": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "COGNITO monitoring settings",
+                    "x-omitempty": true
+                },
+                "DIRECTCONNECT": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "DIRECTCONNECT monitoring settings",
+                    "x-omitempty": true
+                },
+                "DMSREPLICATION": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "DMSREPLICATION monitoring settings",
+                    "x-omitempty": true
+                },
+                "DMSREPLICATIONTASKS": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "DMSREPLICATIONTASKS monitoring settings",
+                    "x-omitempty": true
+                },
+                "DOCDB": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "DOCDB monitoring settings",
+                    "x-omitempty": true
+                },
+                "DYNAMODB": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "DYNAMODB monitoring settings",
+                    "x-omitempty": true
+                },
+                "EBS": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "EBS monitoring settings",
+                    "x-omitempty": true
+                },
+                "EC2": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "EC2 monitoring settings",
+                    "x-omitempty": true
+                },
+                "ECS": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "ECS monitoring settings",
+                    "x-omitempty": true
+                },
+                "EFS": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "EFS monitoring settings",
+                    "x-omitempty": true
+                },
+                "ELASTICACHE": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "ELASTICACHE monitoring settings",
+                    "x-omitempty": true
+                },
+                "ELASTICBEANSTALK": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "ELASTICBEANSTALK monitoring settings",
+                    "x-omitempty": true
+                },
+                "ELASTICSEARCH": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "ELASTICSEARCH monitoring settings",
+                    "x-omitempty": true
+                },
+                "ELASTICTRANSCODER": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "ELASTICTRANSCODER monitoring settings",
+                    "x-omitempty": true
+                },
+                "ELB": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "ELB monitoring settings",
+                    "x-omitempty": true
+                },
+                "EMR": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "EMR monitoring settings",
+                    "x-omitempty": true
+                },
+                "EVENTBRIDGE": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "EVENTBRIDGE monitoring settings",
+                    "x-omitempty": true
+                },
+                "FIREHOSE": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "FIREHOSE monitoring settings",
+                    "x-omitempty": true
+                },
+                "FSX": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "FSX monitoring settings",
+                    "x-omitempty": true
+                },
+                "GLUE": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "GLUE monitoring settings",
+                    "x-omitempty": true
+                },
+                "KINESIS": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "KINESIS monitoring settings",
+                    "x-omitempty": true
+                },
+                "KINESISVIDEO": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "KINESISVIDEO monitoring settings",
+                    "x-omitempty": true
+                },
+                "LAMBDA": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "LAMBDA monitoring settings",
+                    "x-omitempty": true
+                },
+                "MEDIACONNECT": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "MEDIACONNECT monitoring settings",
+                    "x-omitempty": true
+                },
+                "MEDIACONVERT": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "MEDIACONVERT monitoring settings",
+                    "x-omitempty": true
+                },
+                "MEDIAPACKAGELIVE": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "MEDIAPACKAGELIVE monitoring settings",
+                    "x-omitempty": true
+                },
+                "MEDIAPACKAGEVOD": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "MEDIAPACKAGEVOD monitoring settings",
+                    "x-omitempty": true
+                },
+                "MEDIASTORE": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "MEDIASTORE monitoring settings",
+                    "x-omitempty": true
+                },
+                "MEDIATAILOR": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "MEDIATAILOR monitoring settings",
+                    "x-omitempty": true
+                },
+                "MQ": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "MQ monitoring settings",
+                    "x-omitempty": true
+                },
+                "MSKBROKER": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "MSKBROKER monitoring settings",
+                    "x-omitempty": true
+                },
+                "MSKCLUSTER": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "MSKCLUSTER monitoring settings",
+                    "x-omitempty": true
+                },
+                "NATGATEWAY": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "NATGATEWAY monitoring settings",
+                    "x-omitempty": true
+                },
+                "NETWORKELB": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "NETWORKELB monitoring settings",
+                    "x-omitempty": true
+                },
+                "OPSWORKS": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "OPSWORKS monitoring settings",
+                    "x-omitempty": true
+                },
+                "RDS": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "RDS monitoring settings",
+                    "x-omitempty": true
+                },
+                "REDSHIFT": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "REDSHIFT monitoring settings",
+                    "x-omitempty": true
+                },
+                "ROUTE53": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "ROUTE53 monitoring settings",
+                    "x-omitempty": true
+                },
+                "ROUTE53RESOLVER": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "ROUTE53RESOLVER monitoring settings",
+                    "x-omitempty": true
+                },
+                "S3": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "S3 monitoring settings",
+                    "x-omitempty": true
+                },
+                "SAGEMAKER": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "SAGEMAKER monitoring settings",
+                    "x-omitempty": true
+                },
+                "SES": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "SES monitoring settings",
+                    "x-omitempty": true
+                },
+                "SNS": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "SNS monitoring settings",
+                    "x-omitempty": true
+                },
+                "SQS": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "SQS monitoring settings",
+                    "x-omitempty": true
+                },
+                "STEPFUNCTIONS": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "STEPFUNCTIONS monitoring settings",
+                    "x-omitempty": true
+                },
+                "SWFACTIVITY": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "SWFACTIVITY monitoring settings",
+                    "x-omitempty": true
+                },
+                "SWFWORKFLOW": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "SWFWORKFLOW monitoring settings",
+                    "x-omitempty": true
+                },
+                "TRANSITGATEWAY": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "TRANSITGATEWAY monitoring settings",
+                    "x-omitempty": true
+                },
+                "VPN": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "VPN monitoring settings",
+                    "x-omitempty": true
+                },
+                "WORKSPACE": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "WORKSPACE monitoring settings",
+                    "x-omitempty": true
+                },
+                "WORKSPACEDIRECTORY": {
+                    "$ref": "#/definitions/CloudServiceSettings",
+                    "description": "WORKSPACEDIRECTORY monitoring settings",
+                    "x-omitempty": true
+                }
+            },
+            "type": "object"
+        },
+        "CloudServiceSettings": {
+            "properties": {
+                "customNSPSchedule": {
+                    "description": "Custom NetScan Policy schedule",
+                    "type": "string"
+                },
+                "deadOperation": {
+                    "description": "How to handle dead cloud devices (deletion from monitoring) i.e. Manual deletion, after 30 days, etc.",
+                    "type": "string"
+                },
+                "deviceDisplayNameTemplate": {
+                    "description": "Template used to name devices found within the cloud account within the LM portal",
+                    "type": "string"
+                },
+                "disableStopTerminateHostMonitor": {
+                    "description": "If monitoring of stop/terminated hosts is disabled",
+                    "type": "boolean"
+                },
+                "disableTerminatedHostAlerting": {
+                    "description": "If alerting should be disabled when a cloud device is terminated",
+                    "type": "boolean"
+                },
+                "monitoringRegionInfos": {
+                    "description": "The regions this group will monitor",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                },
+                "monitoringRegions": {
+                    "description": "The regions this group will monitor",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                },
+                "nameFilter": {
+                    "description": "Filter to determine which cloud devices should be monitored based on the device name",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "normalCollectorConfig": {
+                    "$ref": "#/definitions/CloudNormalCollectorConfig",
+                    "description": "Configuration of 'normal' collector installed to the cloud (ie an EC2 instance)",
+                    "type": "object",
+                    "x-omitempty": true
+                },
+                "selectAll": {
+                    "description": "Whether or not to apply setting to all regions",
+                    "type": "boolean"
+                },
+                "tags": {
+                    "description": "Tags used to filter whether or not a cloud device is included in this group",
+                    "items": {
+                        "$ref": "#/definitions/CloudTagFilter"
+                    },
+                    "type": "array"
+                },
+                "useDefault": {
+                    "description": "Whether or not to use the default settings for this service",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "useDefault"
+            ],
+            "type": "object"
+        },
+        "CloudTagFilter": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "operation": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "operation",
+                "value"
+            ],
+            "type": "object"
+        },
+        "Device": {
+            "properties": {
+                "autoBalancedCollectorGroupId": {
+                    "description": "The Auto Balanced Collector Group id. 0 means not monitored by ABCG",
+                    "example": 0,
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "autoProperties": {
+                    "description": "Any auto properties assigned to the device",
+                    "items": {
+                        "$ref": "#/definitions/NameAndValue"
+                    },
+                    "readOnly": true,
+                    "type": "array"
+                },
+                "autoPropsAssignedOn": {
+                    "description": "The time, in epoch seconds format, that properties were first discovered for this device",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "autoPropsUpdatedOn": {
+                    "description": "The time, in epoch seconds, that auto properties last ran and updated the properties table for this device",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "awsState": {
+                    "description": "The AWS instance state (if applicable): 1 indicates that the instance is running, 2 indicates that the instance is stopped and 3 the instance is terminated",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "azureState": {
+                    "description": "The GCP instance state (if applicable): 1 indicates that the instance is running, 2 indicates that the instance is stopped and 3 the instance is terminated.",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "collectorDescription": {
+                    "description": "The description/name of the collector for this device",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "createdOn": {
+                    "description": "The time, in epoch seconds format, that the device was added to your LogicMonitor account",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "currentCollectorId": {
+                    "description": "The id of the collector currently monitoring the device and discovering instances",
+                    "example": 1,
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "customProperties": {
+                    "description": "Any non-system properties (aside from system.categories) defined for this device",
+                    "items": {
+                        "$ref": "#/definitions/NameAndValue"
+                    },
+                    "type": "array"
+                },
+                "deletedTimeInMs": {
+                    "description": "The time in milliseconds that the device has been dead for, or since the AWS device was filtered out",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "description": {
+                    "description": "The device description",
+                    "example": "This is a Cisco Router",
+                    "type": "string"
+                },
+                "deviceType": {
+                    "description": "The type of device: 0 indicates a regular device, 2 indicates an AWS device, 4 indicates an Azure device",
+                    "example": 0,
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "disableAlerting": {
+                    "description": "Indicates whether alerting is disabled (true) or enabled (false) for this device",
+                    "example": true,
+                    "type": "boolean"
+                },
+                "displayName": {
+                    "description": "The display name of the device",
+                    "example": "Cisco Router",
+                    "type": "string"
+                },
+                "enableNetflow": {
+                    "description": "Indicates whether Netflow is enabled (true) or disabled (false) for the device",
+                    "example": true,
+                    "type": "boolean"
+                },
+                "gcpState": {
+                    "description": "The Azure instance state (if applicable): 1 indicates that the instance is running, 2 indicates that the instance is stopped and 3 the instance is terminated.",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "hostGroupIds": {
+                    "description": "The Id(s) of the groups the device is in, where multiple group ids are comma separated",
+                    "example": "16,4,3",
+                    "type": "string"
+                },
+                "hostStatus": {
+                    "description": "The status of this device, where possible statuses are normal, dead and dead-collector",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "id": {
+                    "description": "The Id of the device",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "inheritedProperties": {
+                    "description": "Any properties inherit from parents",
+                    "items": {
+                        "$ref": "#/definitions/NameAndValue"
+                    },
+                    "readOnly": true,
+                    "type": "array"
+                },
+                "lastDataTime": {
+                    "description": "The last time, in epoch seconds, that the device received Netflow data",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "lastRawdataTime": {
+                    "description": "The last time, in epoch seconds, that raw Netflow data was reported",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "link": {
+                    "description": "The URL link associated with the device",
+                    "example": "www.ciscorouter.com",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The host name or IP address of the device",
+                    "example": "collector.localhost",
+                    "type": "string"
+                },
+                "netflowCollectorDescription": {
+                    "description": "The description/name of the netflow collector for this device",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "netflowCollectorGroupId": {
+                    "description": "The id of the Collector Group associated with the device's netflow collector",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "netflowCollectorGroupName": {
+                    "description": "The name of the Collector Group associated with the device's netflow collector",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "netflowCollectorId": {
+                    "description": "The Id of the netflow collector associated with the device",
+                    "example": 1,
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "preferredCollectorGroupId": {
+                    "description": "The id of the Collector Group associated with the device's preferred collector",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "preferredCollectorGroupName": {
+                    "description": "The name of the Collector Group associated with the device's preferred collector",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "preferredCollectorId": {
+                    "description": "The Id of the preferred collector assigned to monitor the device",
+                    "example": 2,
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "relatedDeviceId": {
+                    "description": "The Id of the AWS EC2 instance related to this device, if one exists in the LogicMonitor account. This value defaults to -1, which indicates that there are no related devices",
+                    "example": -1,
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "scanConfigId": {
+                    "description": "The Id of the netscan configuration which was used to discover this device. 0 indicates that the device was not discovered by a scan",
+                    "example": 0,
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "systemProperties": {
+                    "description": "Any system properties (aside from system.categories) defined for this device",
+                    "items": {
+                        "$ref": "#/definitions/NameAndValue"
+                    },
+                    "readOnly": true,
+                    "type": "array"
+                },
+                "toDeleteTimeInMs": {
+                    "description": "The number of milliseconds until the device will be automatically deleted from your LogicMonitor account (a value of zero indicates that a future delete time/date has not been scheduled)",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "updatedOn": {
+                    "description": "The time, in epoch seconds format, that the device was last updated",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "upTimeInSeconds": {
+                    "description": "The uptime of the device in seconds. This value will always be the largest value reported by the following datasources:\nHost Uptime-\nSNMPUptime-\nSNMP_Engine_Uptime-\nWinSystemUptime-\nNimbleUptime-",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "userPermission": {
+                    "description": "The read and/or write permissions for this device that are granted to the user who made the API request",
+                    "readOnly": true,
+                    "type": "string"
+                }
+            },
+            "required": [
+                "displayName",
+                "name",
+                "preferredCollectorId"
+            ],
+            "type": "object"
+        },
+        "DeviceGroup": {
+            "properties": {
+                "appliesTo": {
+                    "description": "The Applies to custom query for this group (only for dynamic groups)",
+                    "example": "isLinux()",
+                    "type": "string"
+                },
+                "awsRegionsInfo": {
+                    "description": "The number of instances in each AWS region (only applies to AWS groups)",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "awsTestResult": {
+                    "$ref": "#/definitions/AwsAccountTestResult",
+                    "description": "The String result returned by the transaction that tests the AWS credentials associated with the AWS group",
+                    "readOnly": true
+                },
+                "awsTestResultCode": {
+                    "description": "The Status code result returned by the transaction that tests the AWS credentials associated with the AWS group",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "azureRegionsInfo": {
+                    "description": "The number of instances in each Azure region (only applies to Azure groups)",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "azureTestResult": {
+                    "$ref": "#/definitions/AzureAccountTestResult",
+                    "description": "The String result returned by the transaction that tests the Azure credentials associated with the Azure group",
+                    "readOnly": true
+                },
+                "azureTestResultCode": {
+                    "description": "The Status code result returned by the transaction that tests the Azure credentials associated with the Azure group",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "createdOn": {
+                    "description": "The time, in epoch seconds format, that the device group was created",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "customProperties": {
+                    "description": "The properties associated with this device group",
+                    "items": {
+                        "$ref": "#/definitions/NameAndValue"
+                    },
+                    "type": "array",
+                    "x-omitempty": true
+                },
+                "defaultCollectorDescription": {
+                    "description": "The description of the default collector assigned to the device group",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "defaultCollectorId": {
+                    "description": "The Id of the default collector assigned to the device group",
+                    "example": 1,
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "description": {
+                    "description": "The description of the device group",
+                    "example": "Linux Servers",
+                    "type": "string"
+                },
+                "disableAlerting": {
+                    "description": "Indicates whether alerting is disabled (true) or enabled (false) for this device group",
+                    "example": true,
+                    "type": "boolean"
+                },
+                "effectiveAlertEnabled": {
+                    "description": "Whether or not alerting is effectively disabled for this device group (alerting may be disabled at a higher level, e.g. parent group)",
+                    "readOnly": true,
+                    "type": "boolean"
+                },
+                "enableNetflow": {
+                    "description": "Indicates whether Netflow is enabled (true) or disabled (false) for the device group, the default value is true",
+                    "example": "true",
+                    "type": "boolean"
+                },
+                "extra": {
+                    "$ref": "#/definitions/CloudAccountExtra",
+                    "description": "The extra setting for cloud group",
+                    "x-omitempty": true
+                },
+                "fullPath": {
+                    "description": "The full path of the device group (i.e. if the group 'Dev' is under a parent group named 'Production', the fullPath would be 'Production/Dev'",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "gcpRegionsInfo": {
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "gcpTestResult": {
+                    "$ref": "#/definitions/GcpAccountTestResult",
+                    "description": "The result returned by the transaction that tests the GCP credentials associated with the GCP group",
+                    "readOnly": true
+                },
+                "gcpTestResultCode": {
+                    "description": "The Status code result returned by the transaction that tests the GCP credentials associated with the GCP group",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "groupStatus": {
+                    "description": "normal | dead \nThe status of this device group, where possible statuses are normal and dead. A group with a status of dead may indicate that one or more devices are dead within the group",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "groupType": {
+                    "description": "The type of device group: normal and dynamic device groups will have groupType=Normal, and AWS groups will have a groupType value of AWS/SERVICE (e.g. AWS/S3)",
+                    "example": "Normal",
+                    "type": "string"
+                },
+                "hasNetflowEnabledDevices": {
+                    "description": "Whether if any Netflow enabled devices in this device group",
+                    "readOnly": true,
+                    "type": "boolean"
+                },
+                "id": {
+                    "description": "The id of the device group",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "The name of the device group",
+                    "example": "Linux Servers",
+                    "type": "string"
+                },
+                "numOfAWSDevices": {
+                    "description": "The number of AWS devices that belong to this device group (includes AWS devices in sub groups)",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "numOfAzureDevices": {
+                    "description": "The number of Azure devices that belong to this device group (includes Azure devices in sub groups)",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "numOfDirectDevices": {
+                    "description": "The number of AWS and normal devices that belong only to this device group (doesn't include devices in sub-groups)",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "numOfDirectSubGroups": {
+                    "description": "The number of sub-groups that belong only to this device group (doesn't include groups under sub-groups)",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "numOfGcpDevices": {
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "numOfHosts": {
+                    "description": "The number of total devices, including both AWS and normal devices, that belong to this device group (includes normal devices in sub groups)",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "parentId": {
+                    "description": "The id of the parent group for this device group (the root device group has an Id of 1)",
+                    "example": 1,
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "subGroups": {
+                    "description": "The child device groups within this device group",
+                    "items": {
+                        "$ref": "#/definitions/DeviceGroupData"
+                    },
+                    "readOnly": true,
+                    "type": "array"
+                },
+                "userPermission": {
+                    "description": "The permissions for the device group that are granted to the user that made this API request",
+                    "readOnly": true,
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
+        "DeviceGroupData": {
+            "properties": {
+                "appliesTo": {
+                    "description": "The Applies to custom query for this group (only for dynamic groups)",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "awsRegionsInfo": {
+                    "description": "The number of instances in each AWS region (only applies to AWS groups)",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "azureRegionsInfo": {
+                    "description": "The number of instances in each Azure region (only applies to Azure groups)",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "description": {
+                    "description": "The description of the device group",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "fullPath": {
+                    "description": "The full path of the device group (i.e. if the group 'Dev' is under a parent group named 'Production', the fullPath would be 'Production/Dev'",
+                    "example": "Production/SBA/Linux",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "gcpRegionsInfo": {
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "groupType": {
+                    "description": "The type of device group: normal and dynamic device groups will have groupType=Normal, and AWS groups will have a groupType value of AWS/SERVICE (e.g. AWS/S3)",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "id": {
+                    "description": "The id of the device group",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "The name of the device group",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "numOfDirectDevices": {
+                    "description": "The number of AWS and normal devices that belong only to this device group (doesn't include devices in sub-groups)",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "numOfDirectSubGroups": {
+                    "description": "The number of sub-groups that belong only to this device group (doesn't include groups under sub-groups)",
+                    "format": "int64",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "numOfHosts": {
+                    "description": "The number of total devices, including both AWS and normal devices, that belong to this device group (includes normal devices in sub groups)",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "userPermission": {
+                    "description": "The permissions for the device group that are granted to the user that made this API request",
+                    "readOnly": true,
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "DeviceGroupPaginationResponse": {
+            "properties": {
+                "items": {
+                    "items": {
+                        "$ref": "#/definitions/DeviceGroup"
+                    },
+                    "type": "array"
+                },
+                "searchId": {
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "total": {
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "DevicePaginationResponse": {
+            "properties": {
+                "items": {
+                    "items": {
+                        "$ref": "#/definitions/Device"
+                    },
+                    "type": "array"
+                },
+                "searchId": {
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "total": {
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "ErrorResponse": {
+            "properties": {
+                "errorCode": {
+                    "description": "The error code",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "errorDetail": {
+                    "description": "The error detail",
+                    "readOnly": true,
+                    "type": "object"
+                },
+                "errorMessage": {
+                    "description": "The error message",
+                    "readOnly": true,
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "GcpAccountTestResult": {
+            "properties": {
+                "detailLink": {
+                    "type": "string"
+                },
+                "nonPermissionErrors": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                },
+                "noPermissionServices": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                }
+            },
+            "type": "object"
+        },
+        "NameAndValue": {
+            "properties": {
+                "name": {
+                    "description": "The name of a property",
+                    "example": "addr",
+                    "type": "string"
+                },
+                "value": {
+                    "description": "The value of a property",
+                    "example": "127.0.0.1",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "value"
+            ],
+            "type": "object"
+        }
+    },
+    "externalDocs": {
+        "description": "LogicMonitor Support Docs",
+        "url": "https://www.logicmonitor.com/support/rest-api-developers-guide/"
+    },
+    "info": {
+        "description": "LogicMonitor is a SaaS-based performance monitoring platform that provides full visibility into complex, hybrid infrastructures, offering granular performance monitoring and actionable data and insights. logicmonitor_sdk enables you to manage your LogicMonitor account programmatically.",
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "title": "LogicMonitor REST API",
+        "version": "2.0.0"
+    },
+    "paths": {
+        "/aws/externalId": {
+            "get": {
+                "description": "",
+                "operationId": "getAwsExternalId",
+                "parameters": [],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/AwsExternalId"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "Get AWS external id",
+                "tags": [
+                    "Data Resource AWS External ID"
+                ]
+            }
+        },
+        "/device/devices": {
+            "get": {
+                "description": "",
+                "operationId": "getDeviceList",
+                "parameters": [
+                    {
+                        "default": 0,
+                        "format": "int32",
+                        "in": "query",
+                        "name": "offset",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "default": 50,
+                        "format": "int32",
+                        "in": "query",
+                        "name": "size",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "format": "int64",
+                        "in": "query",
+                        "name": "end",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "format": "int64",
+                        "in": "query",
+                        "name": "start",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "fields",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filter",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "netflowFilter",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/DevicePaginationResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "get device list",
+                "tags": [
+                    "Device"
+                ]
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "description": "",
+                "operationId": "addDevice",
+                "parameters": [
+                    {
+                        "default": false,
+                        "in": "query",
+                        "name": "addFromWizard",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "format": "int64",
+                        "in": "query",
+                        "name": "end",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "format": "int64",
+                        "in": "query",
+                        "name": "start",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Device"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "netflowFilter",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Device"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "add a new device",
+                "tags": [
+                    "Device"
+                ]
+            }
+        },
+        "/device/devices/{id}": {
+            "delete": {
+                "description": "",
+                "operationId": "deleteDeviceById",
+                "parameters": [
+                    {
+                        "default": true,
+                        "in": "query",
+                        "name": "deleteHard",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "format": "int32",
+                        "in": "path",
+                        "name": "id",
+                        "pattern": "\\d+",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "format": "int64",
+                        "in": "query",
+                        "name": "end",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "format": "int64",
+                        "in": "query",
+                        "name": "start",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "netflowFilter",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "delete a device",
+                "tags": [
+                    "Device"
+                ]
+            },
+            "get": {
+                "description": "",
+                "operationId": "getDeviceById",
+                "parameters": [
+                    {
+                        "format": "int32",
+                        "in": "path",
+                        "name": "id",
+                        "pattern": "\\d+",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "format": "int64",
+                        "in": "query",
+                        "name": "end",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "format": "int64",
+                        "in": "query",
+                        "name": "start",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "fields",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "netflowFilter",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Device"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "get device by id",
+                "tags": [
+                    "Device"
+                ]
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "description": "",
+                "operationId": "updateDevice",
+                "parameters": [
+                    {
+                        "default": "refresh",
+                        "in": "query",
+                        "name": "opType",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "format": "int32",
+                        "in": "path",
+                        "name": "id",
+                        "pattern": "\\d+",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "format": "int64",
+                        "in": "query",
+                        "name": "end",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "format": "int64",
+                        "in": "query",
+                        "name": "start",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Device"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "netflowFilter",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Device"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "update a device",
+                "tags": [
+                    "Device"
+                ]
+            }
+        },
+        "/device/groups": {
+            "get": {
+                "description": "",
+                "operationId": "getDeviceGroupList",
+                "parameters": [
+                    {
+                        "default": 0,
+                        "format": "int32",
+                        "in": "query",
+                        "name": "offset",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "default": 50,
+                        "format": "int32",
+                        "in": "query",
+                        "name": "size",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "fields",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filter",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceGroupPaginationResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "get device group list",
+                "tags": [
+                    "Device Group"
+                ]
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "description": "",
+                "operationId": "addDeviceGroup",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeviceGroup"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceGroup"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "add device group",
+                "tags": [
+                    "Device Group"
+                ]
+            }
+        },
+        "/device/groups/{id}": {
+            "delete": {
+                "description": "",
+                "operationId": "deleteDeviceGroupById",
+                "parameters": [
+                    {
+                        "default": false,
+                        "in": "query",
+                        "name": "deleteChildren",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "default": true,
+                        "in": "query",
+                        "name": "deleteHard",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "format": "int32",
+                        "in": "path",
+                        "name": "id",
+                        "pattern": "\\d+",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "delete device group",
+                "tags": [
+                    "Device Group"
+                ]
+            },
+            "get": {
+                "description": "",
+                "operationId": "getDeviceGroupById",
+                "parameters": [
+                    {
+                        "format": "int32",
+                        "in": "path",
+                        "name": "id",
+                        "pattern": "\\d+",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "fields",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceGroup"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "get device group",
+                "tags": [
+                    "Device Group"
+                ]
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "description": "",
+                "operationId": "updateDeviceGroupById",
+                "parameters": [
+                    {
+                        "format": "int32",
+                        "in": "path",
+                        "name": "id",
+                        "pattern": "\\d+",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeviceGroup"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceGroup"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "update device group",
+                "tags": [
+                    "Device Group"
+                ]
+            }
+        }
+    },
+    "schemes": [
+        "https"
+    ],
+    "securityDefinitions": {
+        "LMv1": {
+            "in": "header",
+            "name": "Authorization",
+            "type": "apiKey"
+        }
+    },
+    "swagger": "2.0",
+    "tags": [
+        {
+            "name": "Data Resource AWS External ID"
+        },
+        {
+            "name": "Device Group"
+        },
+        {
+            "name": "Device"
+        }
+    ]
+}
