@@ -14,17 +14,9 @@ package schemata
 {{- end }}
 
 import (
-	{{- if or (eq $isResource true) (and (eq $isDataResource true) (eq $hasID false)) }}
-	"strconv"
-	{{- end }}
-	{{- if and (eq $isDataResource true) (eq $hasID false) }}
-	"time"
-	{{- end }}
 	{{- if or $isResource $needsUtils }}
-	"terraform-provider-logicmonitor/logicmonitor/utils"
+	"tf-provider-example/logicmonitor/utils"
 	{{- end }}
-	"terraform-provider-logicmonitor/models"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func {{ $operationGroup }}Schema() map[string]*schema.Schema {

@@ -1,13 +1,7 @@
 package main
 
 import (
-	"context"
-	"flag"
-	"log"
-	"terraform-provider-logicmonitor/logicmonitor"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"tf-provider-example/logicmonitor"
 )
 
 func main() {

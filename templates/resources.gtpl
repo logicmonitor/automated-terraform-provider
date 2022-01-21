@@ -18,8 +18,7 @@ package resources
 
 {{/* If you want to manually create imports be sure to turn on skip_format for this template */}}
 import (
-	"terraform-provider-logicmonitor/logicmonitor/utils"
-	"terraform-provider-logicmonitor/logicmonitor/schemata"
+	"tf-provider-example/logicmonitor/utils"
 )
 
 /*
