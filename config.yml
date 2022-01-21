@@ -12,12 +12,10 @@ layout:
       source: "provider.gtpl"
       target: "{{ joinFilePath .Target }}/logicmonitor"
       file_name: "provider.go"
-      skip_format: true
     - name: utils 
       source: "utils.gtpl"
       target: "{{ joinFilePath .Target }}/logicmonitor/utils"
       file_name: "helper_functions.go"
-      skip_format: true
     - name: datadump
       source: "datadump.gtpl"
       target: "{{ joinFilePath .Target }}/data_profile"
@@ -31,7 +29,6 @@ layout:
       source: "schemata.gtpl" 
       target: "{{ joinFilePath .Target }}/logicmonitor/schemata"
       file_name: "{{ camelize .Name }}_schema.go"
-      skip_format: true
     - name: datadump
       source: "datadump.gtpl"
       target: "{{ joinFilePath .Target }}/data_profile"

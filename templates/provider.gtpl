@@ -1,12 +1,6 @@
 package logicmonitor 
 
 import (
-	"context"
-	"terraform-provider-logicmonitor/client"
-	"terraform-provider-logicmonitor/logicmonitor/resources"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func Provider() *schema.Provider {
