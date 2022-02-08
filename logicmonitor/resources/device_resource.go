@@ -7,7 +7,6 @@ package resources
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"strconv"
 	"tf-provider-example/client"
@@ -29,10 +28,14 @@ func Device() *schema.Resource {
 		DeleteContext: deleteDeviceById,
 		ReadContext:   getDeviceById,
 		UpdateContext: updateDevice,
-		Importer: &schema.ResourceImporter{
-			State: resourceDeviceStateImporter,
-		},
-		Schema: schemata.DeviceSchema(),
+		Schema:        schemata.DeviceSchema(),
+	}
+}
+
+func DataResourceDevice() *schema.Resource {
+	return &schema.Resource{
+		ReadContext: getDeviceList,
+		Schema: schemata.DataSourceDeviceSchema(),
 	}
 }
 
@@ -156,6 +159,69 @@ func getDeviceById(ctx context.Context, d *schema.ResourceData, m interface{}) d
 	return diags
 }
 
+func getDeviceList(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	params := device.NewGetDeviceListParams()
+
+	endVal, endIsSet := d.GetOk("end")
+	if endIsSet {
+		params.End = endVal.(*int64)
+	}
+
+	fieldsVal, fieldsIsSet := d.GetOk("fields")
+	if fieldsIsSet {
+		params.Fields = fieldsVal.(*string)
+	}
+
+	filterVal, filterIsSet := d.GetOk("filter")
+	if filterIsSet {
+		stringVal := filterVal.(string)
+		params.Filter = &stringVal
+	}
+
+	netflowFilterVal, netflowFilterIsSet := d.GetOk("netflow_filter")
+	if netflowFilterIsSet {
+		params.NetflowFilter = netflowFilterVal.(*string)
+	}
+
+	offsetVal, offsetIsSet := d.GetOk("offset")
+	if offsetIsSet {
+		i := int32(offsetVal.(int))
+		params.Offset = &i
+	}
+
+	sizeVal, sizeIsSet := d.GetOk("size")
+	if sizeIsSet {
+		i := int32(sizeVal.(int))
+		params.Size = &i
+	}
+
+	startVal, startIsSet := d.GetOk("start")
+	if startIsSet {
+		params.Start = startVal.(*int64)
+	}
+
+	client := m.(*client.LogicMonitorRESTAPI)
+
+	resp, err := client.Device.GetDeviceList(params)
+	log.Printf("[TRACE] response: %v", resp)
+	if err != nil {
+		diags = append(diags, diag.Errorf("unexpected: %s", err)...)
+	}
+
+	respModel := resp.GetPayload()
+	if len(respModel.Items) == 0 {
+		diags = append(diags, diag.Errorf("no devices found")...)
+	} else {
+		result := respModel.Items[0]
+		d.SetId(strconv.Itoa(int(result.ID)))
+		schemata.SetDeviceResourceData(d, result)
+	}
+
+	return diags
+}
+
 func updateDevice(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	d.Partial(true)
@@ -221,53 +287,4 @@ func updateDevice(ctx context.Context, d *schema.ResourceData, m interface{}) di
 	d.Partial(false)
 
 	return diags
-}
-
-func resourceDeviceStateImporter(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-	client := m.(*client.LogicMonitorRESTAPI)
-
-	// if user provides an ID, we will add the device directly
-	if utils.IsID(d.Id()) {
-		id, err := strconv.Atoi(d.Id())
-		if err != nil {
-			return nil, err
-		}
-
-		params := device.NewGetDeviceByIDParams()
-		params.SetID(int32(id))
-
-		resp, err := client.Device.GetDeviceByID(params)
-		log.Printf("[TRACE] response: %v", resp)
-		if err != nil {
-			log.Printf("Failed to find device %q", err)
-			return nil, err
-		}
-
-		respModel := resp.GetPayload()
-		schemata.SetDeviceResourceData(d, respModel)
-	} else {
-		// find device by name
-		params := device.NewGetDeviceListParams()
-		filter := fmt.Sprintf("name:\"%s\"", d.Id())
-		params.SetFilter(&filter)
-
-		resp, err := client.Device.GetDeviceList(params)
-		log.Printf("[TRACE] response: %v", resp)
-		if err != nil {
-			err := fmt.Errorf("unexpected: %s", err)
-			return nil, err
-		}
-
-		if resp.Payload.Total > 1 {
-			err := fmt.Errorf("found more than 1 device with filter %s, please make the filter more specific or import with ID", filter)
-			return nil, err
-		} else if resp.Payload.Total == 1 {
-			schemata.SetDeviceResourceData(d, resp.Payload.Items[0])
-			d.SetId(strconv.Itoa(int(resp.Payload.Items[0].ID)))
-		} else {
-			err := fmt.Errorf("found no devices with filter '%s'", filter)
-			return nil, err
-		}
-	}
-	return []*schema.ResourceData{d}, nil
 }

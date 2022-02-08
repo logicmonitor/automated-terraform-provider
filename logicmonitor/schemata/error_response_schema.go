@@ -28,6 +28,12 @@ func ErrorResponseSchema() map[string]*schema.Schema {
 	}
 }
 
+func SetErrorResponseResourceData(d *schema.ResourceData, m *models.ErrorResponse) {
+	d.Set("error_code", m.ErrorCode)
+	d.Set("error_detail", m.ErrorDetail)
+	d.Set("error_message", m.ErrorMessage)
+}
+
 func SetErrorResponseSubResourceData(m []*models.ErrorResponse) (d []*map[string]interface{}) {
 	for _, errorResponse := range m {
 		if errorResponse != nil {
@@ -41,8 +47,7 @@ func SetErrorResponseSubResourceData(m []*models.ErrorResponse) (d []*map[string
 	return
 }
 
-func ErrorResponseModel(d map[string]interface{}) *models.ErrorResponse {
-	// assume that the incoming map only contains the relevant resource data
+func ErrorResponseModel(d *schema.ResourceData) *models.ErrorResponse {
 
 	return &models.ErrorResponse{}
 }

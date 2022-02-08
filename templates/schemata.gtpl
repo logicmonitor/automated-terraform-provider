@@ -1,8 +1,6 @@
 package schemata 
 
 {{- $operationGroup := pascalize .Name -}}
-{{- $isResource := or (eq $operationGroup "Collector") (eq $operationGroup "CollectorGroup") (eq $operationGroup "Device") (eq $operationGroup "DeviceGroup") -}}
-{{- $isDataResource := eq .Name "AwsExternalId" -}}
 {{- $hasID := false -}}
 
 {{- $isReadOnlyModel := true -}}
@@ -14,7 +12,7 @@ package schemata
 {{- end }}
 
 import (
-	{{- if or $isResource $needsUtils }}
+	{{- if $needsUtils }}
 	"tf-provider-example/logicmonitor/utils"
 	{{- end }}
 )
@@ -23,7 +21,7 @@ func {{ $operationGroup }}Schema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		{{- range .Properties }}
 		"{{ snakize .Name }}": {
-				{{- if and $isResource (eq .Name "id") }}
+				{{- if (eq .Name "id") }}
 			Type: schema.TypeString,
 			Computed: true,
 				{{- else }}
@@ -86,11 +84,9 @@ func {{ $operationGroup }}Schema() map[string]*schema.Schema {
 	}
 }
 
-{{- if or $isResource $isDataResource }}
-
 func Set{{ $operationGroup }}ResourceData(d *schema.ResourceData, m *models.{{ $operationGroup }}) {
 	{{- range .Properties }}
-		{{- if and $isResource (eq .Name "id") }}
+		{{- if (eq .Name "id") }}
 	d.Set("id", strconv.Itoa(int(m.ID)))
 		{{- else if or .IsComplexObject }}
 	d.Set("{{ snakize .Name }}", Set{{ pascalize .GoType }}SubResourceData([]*models.{{ pascalize .GoType }}{m.{{ pascalize .Name }}}))
@@ -100,11 +96,7 @@ func Set{{ $operationGroup }}ResourceData(d *schema.ResourceData, m *models.{{ $
 	d.Set("{{ snakize .Name }}", m.{{ pascalize .Name }})
 		{{- end }}
 	{{- end }}
-	{{- if and (eq $isDataResource true) (eq $hasID false) }}
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
-	{{- end }}
 }
-{{- end }}
 
 func Set{{ $operationGroup }}SubResourceData(m []*models.{{ $operationGroup }}) (d []*map[string]interface{}) {
 	{{- $model := camelize $operationGroup }}
@@ -126,7 +118,6 @@ func Set{{ $operationGroup }}SubResourceData(m []*models.{{ $operationGroup }}) 
 	return
 }
 
-{{ if $isResource -}}
 func {{ $operationGroup }}Model(d *schema.ResourceData) *models.{{ $operationGroup }} {
 	{{- range .Properties }}
 		{{- if or (not .ReadOnly) (and (eq .Name "id") (not $isReadOnlyModel)) }}
@@ -184,67 +175,7 @@ func {{ $operationGroup }}Model(d *schema.ResourceData) *models.{{ $operationGro
 		{{- end }}
 	}
 }
-{{- else -}}
-func {{ $operationGroup }}Model(d map[string]interface{}) *models.{{ $operationGroup }} {
-	// assume that the incoming map only contains the relevant resource data
-	{{- range .Properties }}
-		{{- if or (not .ReadOnly) (and (eq .Name "id") (not $isReadOnlyModel)) }}
-			{{- if .IsComplexObject }}
-	var {{ varname .Name }} *models.{{ pascalize .GoType }} = nil
-	{{ .Name }}List := d["{{ snakize .Name }}"].([]interface{})
-	if len({{ .Name }}List) > 0 { // len(nil) = 0
-		{{ varname .Name }} = {{ .GoType }}Model({{ .Name }}List[0].(map[string]interface{}))
-	}
 
-			{{- else if stringContains .Name "Properties" }}
-	{{ varname .Name }} := utils.GetPropertiesFromMap(d, "{{ snakize .Name }}")
-
-			{{- else if eq .Name "collectors" }}
-	{{ varname .Name }} := utils.GetCloudCollectorConfigs(d["{{ .Name }}"].([]interface{}))
-			
-			{{- else if eq .Name "tags" }}
-	{{ varname .Name }} := utils.GetCloudTagFilters(d["{{ .Name }}"].([]interface{}))
-			
-			{{- else if eq .GoType "interface{}" }}
-	{{ varname .Name }} := d["{{ snakize .Name }}"]
-
-			{{- else if or (eq .GoType "int32") ( eq .GoType "int64") }}
-	{{ varname .Name }} := {{ .GoType }}(d["{{ snakize .Name }}"].(int))
-
-			{{- else if eq .GoType "[]string" }}
-	{{ varname .Name }} := utils.ConvertSetToStringSlice(d["{{ snakize .Name }}"].(*schema.Set))
-
-			{{- else if stringContains .GoType "[]*" }}
-				{{- if stringContains $operationGroup "PaginationResponse" }}
-	{{ varname .Name }} := d["{{ snakize .Name }}"].([]*models.{{ pascalize (slice .GoType 3) }})
-				{{- else }}
-	{{ varname .Name }} := d["{{ snakize .Name }}"].([]*models.{{ pascalize .GoType }})
-				{{- end }}
-
-			{{- else if and (not (eq .GoType "string")) (not (eq .GoType "[]string")) (not (eq .GoType "bool")) (not (eq .GoType "int")) (not (eq .GoType "float32")) (not (eq .GoType "float64")) (not (eq .GoType "uint32")) (not (eq .GoType "uint64")) }}
-	{{ varname .Name }} := d["{{ snakize .Name }}"].(*models.{{ pascalize .GoType }})
-
-			{{- else }}
-	{{ varname .Name }} := d["{{ snakize .Name }}"].({{ .GoType }})
-			{{- end }}
-		{{- end }}
-	{{- end }}
-	
-	return &models.{{ $operationGroup }} {
-		{{- if not $isReadOnlyModel }}
-		{{- range .Properties }}
-			{{- if or (not .ReadOnly) (eq .Name "id") }}
-				{{- if and (and (not .IsMap) .IsNullable (not .IsSuperAlias)) (not .IsComplexObject) }}
-		{{ pascalize .Name }}: &{{ varname .Name }},
-				{{- else }}
-		{{ pascalize .Name }}: {{ varname .Name }},
-				{{- end }}
-			{{- end }}
-		{{- end }}
-		{{- end }}
-	}
-}
-{{ end }}
 func Get{{ $operationGroup }}PropertyFields() (t []string) {
 	return []string{
 		{{- range .Properties }}

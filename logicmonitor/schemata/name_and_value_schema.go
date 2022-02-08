@@ -20,6 +20,11 @@ func NameAndValueSchema() map[string]*schema.Schema {
 	}
 }
 
+func SetNameAndValueResourceData(d *schema.ResourceData, m *models.NameAndValue) {
+	d.Set("name", m.Name)
+	d.Set("value", m.Value)
+}
+
 func SetNameAndValueSubResourceData(m []*models.NameAndValue) (d []*map[string]interface{}) {
 	for _, nameAndValue := range m {
 		if nameAndValue != nil {
@@ -32,10 +37,9 @@ func SetNameAndValueSubResourceData(m []*models.NameAndValue) (d []*map[string]i
 	return
 }
 
-func NameAndValueModel(d map[string]interface{}) *models.NameAndValue {
-	// assume that the incoming map only contains the relevant resource data
-	name := d["name"].(string)
-	value := d["value"].(string)
+func NameAndValueModel(d *schema.ResourceData) *models.NameAndValue {
+	name := d.Get("name").(string)
+	value := d.Get("value").(string)
 
 	return &models.NameAndValue{
 		Name:  &name,
