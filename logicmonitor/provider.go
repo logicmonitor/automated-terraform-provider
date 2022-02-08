@@ -31,7 +31,9 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"logicmonitor_device": resources.Device(),
 		},
-		DataSourcesMap:       map[string]*schema.Resource{},
+		DataSourcesMap: map[string]*schema.Resource{
+			"logicmonitor_device": resources.DataResourceDevice(),
+		},
 		ConfigureContextFunc: providerConfigure,
 	}
 }

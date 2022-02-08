@@ -29,6 +29,12 @@ func DevicePaginationResponseSchema() map[string]*schema.Schema {
 	}
 }
 
+func SetDevicePaginationResponseResourceData(d *schema.ResourceData, m *models.DevicePaginationResponse) {
+	d.Set("items", SetDeviceSubResourceData(m.Items))
+	d.Set("search_id", m.SearchID)
+	d.Set("total", m.Total)
+}
+
 func SetDevicePaginationResponseSubResourceData(m []*models.DevicePaginationResponse) (d []*map[string]interface{}) {
 	for _, devicePaginationResponse := range m {
 		if devicePaginationResponse != nil {
@@ -42,9 +48,8 @@ func SetDevicePaginationResponseSubResourceData(m []*models.DevicePaginationResp
 	return
 }
 
-func DevicePaginationResponseModel(d map[string]interface{}) *models.DevicePaginationResponse {
-	// assume that the incoming map only contains the relevant resource data
-	items := d["items"].([]*models.Device)
+func DevicePaginationResponseModel(d *schema.ResourceData) *models.DevicePaginationResponse {
+	items := d.Get("items").([]*models.Device)
 
 	return &models.DevicePaginationResponse{
 		Items: items,

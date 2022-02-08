@@ -90,7 +90,7 @@ func DeviceSchema() map[string]*schema.Schema {
 
 		"display_name": {
 			Type:     schema.TypeString,
-			Required: true,
+			Optional: true,
 		},
 
 		"enable_netflow": {
@@ -144,7 +144,7 @@ func DeviceSchema() map[string]*schema.Schema {
 
 		"name": {
 			Type:     schema.TypeString,
-			Required: true,
+			Optional: true,
 		},
 
 		"netflow_collector_description": {
@@ -179,7 +179,7 @@ func DeviceSchema() map[string]*schema.Schema {
 
 		"preferred_collector_id": {
 			Type:     schema.TypeInt,
-			Required: true,
+			Optional: true,
 		},
 
 		"related_device_id": {
@@ -221,6 +221,15 @@ func DeviceSchema() map[string]*schema.Schema {
 			Computed: true,
 		},
 	}
+}
+
+func DataSourceDeviceSchema() map[string]*schema.Schema {
+	deviceSchema := DeviceSchema()
+	deviceSchema["filter"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+	return deviceSchema
 }
 
 func SetDeviceResourceData(d *schema.ResourceData, m *models.Device) {
@@ -349,6 +358,7 @@ func DeviceModel(d *schema.ResourceData) *models.Device {
 		RelatedDeviceID:              relatedDeviceID,
 	}
 }
+
 func GetDevicePropertyFields() (t []string) {
 	return []string{
 		"auto_balanced_collector_group_id",

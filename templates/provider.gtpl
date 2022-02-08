@@ -24,23 +24,12 @@ func Provider() *schema.Provider {
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			{{- range .OperationGroups }}
-				{{- $isResource := false -}}
-				{{- range .Operations -}}
-					{{- if eq .Method "POST" -}}
-						{{- $isResource = true -}}
-					{{- end -}}
-				{{- end -}}
-				{{- if eq $isResource true }}
 			"logicmonitor_{{ humanize .Name | snakize }}": resources.{{ pascalize .Name }}(),
-				{{- end }}
 			{{- end }}
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			{{- range .OperationGroups }}
-				{{- $isDataResource := hasPrefix .Name "data_resource_" -}}
-				{{- if eq $isDataResource true }}
-			"logicmonitor_{{ humanize .Name | snakize }}": resources.{{ pascalize .Name }}(),
-				{{- end }}
+			"logicmonitor_{{ humanize .Name | snakize }}": resources.DataResource{{ pascalize .Name }}(),
 			{{- end }}
 		},
 		ConfigureContextFunc: providerConfigure,
