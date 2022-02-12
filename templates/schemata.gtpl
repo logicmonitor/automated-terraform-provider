@@ -84,6 +84,72 @@ func {{ $operationGroup }}Schema() map[string]*schema.Schema {
 	}
 }
 
+{{- if eq .Example "isResource" }}
+func DataSource{{ $operationGroup }}Schema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		{{- range .Properties }}
+		"{{ snakize .Name }}": {
+				{{- if (eq .Name "id") }}
+			Type: schema.TypeString,
+				{{- else }}
+					{{- if eq .GoType "string" }}
+			Type: schema.TypeString,
+						{{- if .Default }}
+			Default: "{{ .Default }}",
+						{{- end }}
+					{{- else if eq .GoType "bool" }}
+			Type: schema.TypeBool,
+					{{- if .Default }}
+			Default: {{ .Default }},
+						{{- end }}
+					{{- else if eq .GoType "float64" }}
+			Type: schema.TypeFloat,
+					{{- else if eq .GoType "float32" }}
+			Type: schema.TypeFloat,
+					{{- else if eq .GoType "int64" }}
+			Type: schema.TypeInt,
+					{{- else if eq .GoType "int32" }}
+			Type: schema.TypeInt,
+					{{- else if eq .GoType "int" }}
+			Type: schema.TypeInt,
+					{{- else if eq .GoType "uint64" }}
+			Type: schema.TypeInt,
+					{{- else if eq .GoType "uint32" }}
+			Type: schema.TypeInt,
+					{{- else if eq .GoType "[]string" }}
+			Type: schema.TypeSet,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			Set:      schema.HashString,
+					{{- else if eq .GoType "interface{}" }}
+			Type: schema.TypeMap, //GoType: {{ .GoType }}
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+					{{- else }}
+			Type: schema.TypeList, //GoType: {{ .GoType }}
+						{{- if stringContains .GoType "[]*" }} 
+			Elem: &schema.Resource{
+				Schema: {{ .Items.GoType }}Schema(),
+			},
+			ConfigMode: schema.SchemaConfigModeAttr,
+						{{- else }}
+			Elem: &schema.Resource{
+				Schema: {{ .GoType }}Schema(),
+			},
+						{{- end }}
+					{{- end }}
+			Optional: true,
+				{{- end }}
+		},
+		{{ end }}
+		"filter": {
+			Type:     schema.TypeString,
+            Optional: true,
+		},
+	}
+}
+{{- end }}
+
 func Set{{ $operationGroup }}ResourceData(d *schema.ResourceData, m *models.{{ $operationGroup }}) {
 	{{- range .Properties }}
 		{{- if (eq .Name "id") }}
@@ -151,7 +217,7 @@ func {{ $operationGroup }}Model(d *schema.ResourceData) *models.{{ $operationGro
 	{{ varname .Name }} := utils.ConvertSetToStringSlice(d.Get("{{ snakize .Name }}").(*schema.Set))
 
 			{{- else if and (not (eq .GoType "string")) (not (eq .GoType "[]string")) (not (eq .GoType "bool")) (not (eq .GoType "int")) (not (eq .GoType "float32")) (not (eq .GoType "float64")) (not (eq .GoType "uint32")) (not (eq .GoType "uint64")) }}
-	{{ varname .Name }} := d.Get("{{ snakize .Name }}").(*models.{{ pascalize .GoType }})
+	{{ varname .Name }} := d.Get("{{ snakize .Name }}").({{ if hasPrefix .GoType "[]" }}[]{{ end }}*models.{{ pascalize .GoType }})
 
 			{{- else }}
 	{{ varname .Name }} := d.Get("{{ snakize .Name }}").({{ .GoType }})
