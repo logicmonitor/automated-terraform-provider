@@ -55,7 +55,7 @@ func DataResource{{ pascalize $operationGroup }}() *schema.Resource {
 			{{- end }}
 			{{- end}}
 		{{- end }}
-		Schema: schemata.{{- pascalize $operationGroup -}}Schema(),
+		Schema: schemata.DataSource{{- pascalize $operationGroup -}}Schema(),
 	}
 }
 
@@ -63,6 +63,38 @@ func DataResource{{ pascalize $operationGroup }}() *schema.Resource {
 	{{- $operation := .Name }}
 	{{- if not (stringContains $operation "misc") }}
 	{{- if (eq .Method "GET") }}
+		{{- if stringContains $operation "List" }}
+func {{ $operation }}(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
+	
+	params := {{ $operationGroup }}.New{{ pascalize $operation }}Params()
+
+	filterVal, filterIsSet := d.GetOk("filter")
+	if filterIsSet {
+		stringVal := filterVal.(string)
+		params.Filter = &stringVal
+	}
+
+	client := m.(*client.LogicMonitorRESTAPI)
+
+	resp, err := client.{{ pascalize $operationGroup }}.{{ pascalize $operation }}(params {{ if .HasStreamingResponse }}, Discard {{ end }})
+	log.Printf("[TRACE] response: %v", resp)
+	if(err != nil){
+		diags = append(diags, diag.Errorf("unexpected: %s", err)...)
+	}
+	
+	respModel := resp.GetPayload()
+	if len(respModel.Items) == 0 {
+		diags = append(diags, diag.Errorf("no devices found")...)
+	} else {
+		result := respModel.Items[0]
+		d.SetId(strconv.Itoa(int(result.ID)))
+		schemata.Set{{- pascalize $operationGroup -}}ResourceData(d, result)
+	}
+
+	return diags
+}
+		{{- else }}
 func {{ $operation }}(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	
@@ -109,6 +141,7 @@ func {{ $operation }}(ctx context.Context, d *schema.ResourceData, m interface{}
 
 	return diags
 }
+		{{- end }}
 	{{- end }}
 
 	{{- if eq .Method "POST" }}

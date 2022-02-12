@@ -2,6 +2,7 @@
           "basePath": "/santaba/rest",
           "definitions": {
                     "Device": {
+                              "example": "isResource",
                               "properties": {
                                         "autoBalancedCollectorGroupId": {
                                                   "description": "The Auto Balanced Collector Group id. 0 means not monitored by ABCG",

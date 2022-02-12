@@ -35,7 +35,7 @@ func Device() *schema.Resource {
 func DataResourceDevice() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: getDeviceList,
-		Schema: schemata.DataSourceDeviceSchema(),
+		Schema:      schemata.DataSourceDeviceSchema(),
 	}
 }
 
@@ -164,42 +164,10 @@ func getDeviceList(ctx context.Context, d *schema.ResourceData, m interface{}) d
 
 	params := device.NewGetDeviceListParams()
 
-	endVal, endIsSet := d.GetOk("end")
-	if endIsSet {
-		params.End = endVal.(*int64)
-	}
-
-	fieldsVal, fieldsIsSet := d.GetOk("fields")
-	if fieldsIsSet {
-		params.Fields = fieldsVal.(*string)
-	}
-
 	filterVal, filterIsSet := d.GetOk("filter")
 	if filterIsSet {
 		stringVal := filterVal.(string)
 		params.Filter = &stringVal
-	}
-
-	netflowFilterVal, netflowFilterIsSet := d.GetOk("netflow_filter")
-	if netflowFilterIsSet {
-		params.NetflowFilter = netflowFilterVal.(*string)
-	}
-
-	offsetVal, offsetIsSet := d.GetOk("offset")
-	if offsetIsSet {
-		i := int32(offsetVal.(int))
-		params.Offset = &i
-	}
-
-	sizeVal, sizeIsSet := d.GetOk("size")
-	if sizeIsSet {
-		i := int32(sizeVal.(int))
-		params.Size = &i
-	}
-
-	startVal, startIsSet := d.GetOk("start")
-	if startIsSet {
-		params.Start = startVal.(*int64)
 	}
 
 	client := m.(*client.LogicMonitorRESTAPI)
