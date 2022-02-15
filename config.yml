@@ -1,0 +1,61 @@
+layout:
+  application:
+    - name: facade
+      source: asset:clientFacade
+      target: "{{ joinFilePath .Target .ClientPackage }}"
+      file_name: "{{ .Name }}_client.go"
+    - name: lmmain 
+      source: "main.gtpl"
+      target: "{{ joinFilePath .Target }}"
+      file_name: "main.go"
+    - name: provider 
+      source: "provider.gtpl"
+      target: "{{ joinFilePath .Target }}/logicmonitor"
+      file_name: "provider.go"
+    - name: utils 
+      source: "utils.gtpl"
+      target: "{{ joinFilePath .Target }}/logicmonitor/utils"
+      file_name: "helper_functions.go"
+    - name: datadump
+      source: "datadump.gtpl"
+      target: "{{ joinFilePath .Target }}/data_profile"
+      file_name: "application.profile"
+  models:
+    - name: definition
+      source: asset:model
+      target: "{{ joinFilePath .Target .ModelPackage }}"
+      file_name: "{{ (snakize (pascalize .Name)) }}.go"
+    - name: schemata
+      source: "schemata.gtpl" 
+      target: "{{ joinFilePath .Target }}/logicmonitor/schemata"
+      file_name: "{{ camelize .Name }}_schema.go"
+    - name: datadump
+      source: "datadump.gtpl"
+      target: "{{ joinFilePath .Target }}/data_profile"
+      file_name: "{{ camelize .Name }}_models.profile"
+  operations:
+    - name: tf_parameters
+      source: "tf_parameters.gotmpl"
+      target: "{{ joinFilePath .Target .ClientPackage .Package }}"
+      file_name: "{{ (snakize (pascalize .Name)) }}_parameters.go"
+    - name: tf_responses
+      source: "tf_responses.gtpl"
+      target: "{{ joinFilePath .Target .ClientPackage .Package }}"
+      file_name: "{{ (snakize (pascalize .Name)) }}_responses.go"
+    - name: datadump
+      source: "datadump.gtpl"
+      target: "{{ joinFilePath .Target }}/data_profile"
+      file_name: "operations.profile"
+  operation_groups:
+    - name: client
+      source: asset:clientClient
+      target: "{{ joinFilePath .Target .ClientPackage .Name }}"
+      file_name: "{{ (snakize (pascalize .Name)) }}_client.go"
+    - name: resources 
+      source: "resources.gtpl" 
+      target: "{{ joinFilePath .Target }}/logicmonitor/resources"
+      file_name: "{{ camelize .Name }}_resource.go"
+    - name: datadump
+      source: "datadump.gtpl"
+      target: "{{ joinFilePath .Target }}/data_profile"
+      file_name: "operation_groups.profile"
