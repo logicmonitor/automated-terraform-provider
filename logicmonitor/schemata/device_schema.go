@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+// Schema mapping representing the Device resource defined in the Terraform configuration
 func DeviceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"auto_balanced_collector_group_id": {
@@ -222,6 +223,9 @@ func DeviceSchema() map[string]*schema.Schema {
 		},
 	}
 }
+
+// Schema mapping representing the resource's respective datasource object defined in Terraform configuration
+// Only difference between this and DeviceSchema() are the computabilty of the id field and the inclusion of a filter field for datasources
 func DataSourceDeviceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"auto_balanced_collector_group_id": {
@@ -441,6 +445,7 @@ func DataSourceDeviceSchema() map[string]*schema.Schema {
 	}
 }
 
+// Update the underlying Device resource data in the Terraform configuration using the resource model built from the CREATE/UPDATE/READ LM API request response
 func SetDeviceResourceData(d *schema.ResourceData, m *models.Device) {
 	d.Set("auto_balanced_collector_group_id", m.AutoBalancedCollectorGroupID)
 	d.Set("auto_properties", SetNameAndValueSubResourceData(m.AutoProperties))
@@ -483,6 +488,7 @@ func SetDeviceResourceData(d *schema.ResourceData, m *models.Device) {
 	d.Set("user_permission", m.UserPermission)
 }
 
+// Iterate throught and update the Device resource data within a pagination response (typically defined in the items array field) retrieved from a READ operation for multiple LM resources
 func SetDeviceSubResourceData(m []*models.Device) (d []*map[string]interface{}) {
 	for _, device := range m {
 		if device != nil {
@@ -532,6 +538,9 @@ func SetDeviceSubResourceData(m []*models.Device) (d []*map[string]interface{}) 
 	return
 }
 
+// Function to perform the following actions:
+// (1) Translate Device resource data into a schema model struct that will sent to the LM API for resource creation/updating
+// (2) Translate LM API response object from (1) or from a READ operation into a model that can be used to mofify the underlying resource data in the Terrraform configuration
 func DeviceModel(d *schema.ResourceData) *models.Device {
 	autoBalancedCollectorGroupID := int32(d.Get("auto_balanced_collector_group_id").(int))
 	currentCollectorID := int32(d.Get("current_collector_id").(int))
@@ -568,6 +577,7 @@ func DeviceModel(d *schema.ResourceData) *models.Device {
 	}
 }
 
+// Retrieve property field names for updating the Device resource
 func GetDevicePropertyFields() (t []string) {
 	return []string{
 		"auto_balanced_collector_group_id",
