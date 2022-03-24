@@ -3,6 +3,7 @@ package schemata
 {{- $operationGroup := pascalize .Name -}}
 {{- $hasID := false -}}
 
+{{/* Some property fields can be characterized as more "complex" objects whose data must be retrieved with specialized helper functions */}}
 {{- $isReadOnlyModel := true -}}
 {{- $needsUtils := false -}}
 {{- range .Properties -}}
@@ -17,6 +18,7 @@ import (
 	{{- end }}
 )
 
+// Schema mapping representing the {{ $operationGroup }} resource defined in the Terraform configuration
 func {{ $operationGroup }}Schema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		{{- range .Properties }}
@@ -84,7 +86,10 @@ func {{ $operationGroup }}Schema() map[string]*schema.Schema {
 	}
 }
 
+{{/* Only resources have respective data sources that need to be mapped to an appropriate schema */}}
 {{- if eq .Example "isResource" }}
+// Schema mapping representing the resource's respective datasource object defined in Terraform configuration
+// Only difference between this and {{ $operationGroup }}Schema() are the computabilty of the id field and the inclusion of a filter field for datasources
 func DataSource{{ $operationGroup }}Schema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		{{- range .Properties }}
@@ -150,6 +155,7 @@ func DataSource{{ $operationGroup }}Schema() map[string]*schema.Schema {
 }
 {{- end }}
 
+// Update the underlying {{ $operationGroup }} resource data in the Terraform configuration using the resource model built from the CREATE/UPDATE/READ LM API request response
 func Set{{ $operationGroup }}ResourceData(d *schema.ResourceData, m *models.{{ $operationGroup }}) {
 	{{- range .Properties }}
 		{{- if (eq .Name "id") }}
@@ -164,6 +170,7 @@ func Set{{ $operationGroup }}ResourceData(d *schema.ResourceData, m *models.{{ $
 	{{- end }}
 }
 
+// Iterate throught and update the {{ $operationGroup }} resource data within a pagination response (typically defined in the items array field) retrieved from a READ operation for multiple LM resources
 func Set{{ $operationGroup }}SubResourceData(m []*models.{{ $operationGroup }}) (d []*map[string]interface{}) {
 	{{- $model := camelize $operationGroup }}
 	for _, {{ $model }} := range m {
@@ -184,6 +191,9 @@ func Set{{ $operationGroup }}SubResourceData(m []*models.{{ $operationGroup }}) 
 	return
 }
 
+// Function to perform the following actions:
+// (1) Translate {{ $operationGroup }} resource data into a schema model struct that will sent to the LM API for resource creation/updating
+// (2) Translate LM API response object from (1) or from a READ operation into a model that can be used to mofify the underlying resource data in the Terrraform configuration
 func {{ $operationGroup }}Model(d *schema.ResourceData) *models.{{ $operationGroup }} {
 	{{- range .Properties }}
 		{{- if or (not .ReadOnly) (and (eq .Name "id") (not $isReadOnlyModel)) }}
@@ -242,6 +252,7 @@ func {{ $operationGroup }}Model(d *schema.ResourceData) *models.{{ $operationGro
 	}
 }
 
+// Retrieve property field names for updating the {{ $operationGroup }} resource 
 func Get{{ $operationGroup }}PropertyFields() (t []string) {
 	return []string{
 		{{- range .Properties }}
