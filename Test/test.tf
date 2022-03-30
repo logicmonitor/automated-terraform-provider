@@ -8,16 +8,10 @@ terraform {
 	}
 }
 
-# provider "logicmonitor" {
-# 	api_id = <ADD YOUR LM API_ID HERE>
-# 	api_key = <ADD YOUR LM API_KEY HERE>
-# 	company = <ADD YOUR LM PORTAL NAME HERE>
-# }
-
 provider "logicmonitor" {
-	api_id = "iG9utmsvgZCpQzwEg2Mf"
-	api_key = "v8%QzY]Z[+d6-y~8K=7[6mLW+~)d{YwT]3Nn3m{S"
-	company = "lmadamjohnson"
+	api_id = <ADD YOUR LM API_ID HERE>
+	api_key = <ADD YOUR LM API_KEY HERE>
+	company = <ADD YOUR LM PORTAL NAME HERE>
 }
 
 resource "logicmonitor_device" "my_device"{
