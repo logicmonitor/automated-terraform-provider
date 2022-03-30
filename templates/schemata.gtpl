@@ -96,6 +96,8 @@ func DataSource{{ $operationGroup }}Schema() map[string]*schema.Schema {
 		"{{ snakize .Name }}": {
 				{{- if (eq .Name "id") }}
 			Type: schema.TypeString,
+			Computed: true,
+			Optional: true,
 				{{- else }}
 					{{- if eq .GoType "string" }}
 			Type: schema.TypeString,
