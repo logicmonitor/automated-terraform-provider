@@ -2,9 +2,11 @@ import json, os, sys
 
 ###############################
 # Small script for dynamically generating a swagger spec file.
+# Requires Python3
+#
 # It uses the "component" spec files found in spec_files/components to aggregate the needed definitions, paths, and tags.
-# In order to not include a certain component, try running the script with the components you want to exclude.
-# i.e. `python createSpecFile.py collector_group` will generate a spec file with all components except collector groups.
+# In order to exlude a certain component, run the script with the component names you'd like to exclude as arguments.
+# i.e. `python createSpecFile.py dashboard` will generate a spec file with all components except dashboards.
 ###############################
 
 COMPONENTS_DIR = "./components"
