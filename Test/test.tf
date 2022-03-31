@@ -3,7 +3,7 @@ terraform {
 	required_providers {
 		logicmonitor = {
 			source  = "logicmonitor.com/com/logicmonitor"
-			version = "0.1"
+			version = "0.2"
 		}
 	}
 }
