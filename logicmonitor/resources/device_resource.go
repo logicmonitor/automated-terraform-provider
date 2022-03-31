@@ -151,6 +151,7 @@ func getDeviceById(ctx context.Context, d *schema.ResourceData, m interface{}) d
 	log.Printf("[TRACE] response: %v", resp)
 	if err != nil {
 		diags = append(diags, diag.Errorf("unexpected: %s", err)...)
+		return diags
 	}
 
 	respModel := resp.GetPayload()
@@ -176,12 +177,14 @@ func getDeviceList(ctx context.Context, d *schema.ResourceData, m interface{}) d
 	log.Printf("[TRACE] response: %v", resp)
 	if err != nil {
 		diags = append(diags, diag.Errorf("unexpected: %s", err)...)
+		return diags
 	}
 
 	respModel := resp.GetPayload()
 	if len(respModel.Items) == 0 {
 		diags = append(diags, diag.Errorf("no devices found")...)
 	} else {
+		// limit output to a single result
 		result := respModel.Items[0]
 		d.SetId(strconv.Itoa(int(result.ID)))
 		schemata.SetDeviceResourceData(d, result)
