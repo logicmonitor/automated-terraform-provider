@@ -2,7 +2,7 @@ HOSTNAME=logicmonitor.com
 NAMESPACE=com
 NAME=logicmonitor
 BINARY=terraform-provider-${NAME}
-VERSION=0.1
+VERSION=0.2
 OS_ARCH=darwin_amd64
 
 default: install
@@ -12,6 +12,7 @@ build:  clean
 	go build -o ${BINARY}
 
 clean:
+	rm -Rf data_profile/
 	rm -Rf logicmonitor/*
 
 nogen: 
