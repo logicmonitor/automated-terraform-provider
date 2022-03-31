@@ -2,7 +2,7 @@ package logicmonitor
 
 import (
 )
-
+{{/* the provider unction provides Terraform with an interface to configure your provider and access its resources and datasources */}}
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
@@ -35,7 +35,7 @@ func Provider() *schema.Provider {
 		ConfigureContextFunc: providerConfigure,
 	}
 }
-
+{{/* if you make your own provider using our repo as a template, you'll likely need to change how yours is configured */}}
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
