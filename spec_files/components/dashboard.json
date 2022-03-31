@@ -216,7 +216,7 @@
                 ],
                 "summary": "get dashboard list",
                 "tags": [
-                    "Dashboards"
+                    "Dashboard"
                 ]
             },
             "post": {
@@ -259,7 +259,7 @@
                 ],
                 "summary": "add dashboard",
                 "tags": [
-                    "Dashboards"
+                    "Dashboard"
                 ]
             }
         },
@@ -301,7 +301,7 @@
                 ],
                 "summary": "delete dashboard",
                 "tags": [
-                    "Dashboards"
+                    "Dashboard"
                 ]
             },
             "get": {
@@ -361,7 +361,7 @@
                 ],
                 "summary": "get dashboard",
                 "tags": [
-                    "Dashboards"
+                    "Dashboard"
                 ]
             },
             "put": {
@@ -419,14 +419,14 @@
                 ],
                 "summary": "update dashboard",
                 "tags": [
-                    "Dashboards"
+                    "Dashboard"
                 ]
             }
         }
     },
     "tags": [
         {
-            "name": "Dashboards"
+            "name": "Dashboard"
         }
     ]
 }
