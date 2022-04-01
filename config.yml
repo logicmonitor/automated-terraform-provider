@@ -35,7 +35,7 @@ layout:
       file_name: "{{ camelize .Name }}_models.profile"
   operations:
     - name: tf_parameters
-      source: "tf_parameters.gotmpl"
+      source: asset:clientParameter
       target: "{{ joinFilePath .Target .ClientPackage .Package }}"
       file_name: "{{ (snakize (pascalize .Name)) }}_parameters.go"
     - name: tf_responses
