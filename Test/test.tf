@@ -37,6 +37,7 @@ resource "logicmonitor_device" "my_device"{
 
 data "logicmonitor_device" "my_devices" {
     filter = "displayName~\"Cisco Router\""
+	// make sure that the device is created before we try to query for it
 	depends_on = [
 		logicmonitor_device.my_device
 	]
