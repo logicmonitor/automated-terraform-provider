@@ -8,7 +8,7 @@ package schemata
 {{- $needsUtils := false -}}
 {{- range .Properties -}}
 	{{- if not .ReadOnly -}} {{- $isReadOnlyModel = false -}} {{- end -}}
-	{{- if or (eq .Name "collectors") (eq .Name "customProperties") (eq .Name "tags") (eq .GoType "[]string") -}} {{- $needsUtils = true -}} {{- end -}}
+	{{- if eq .Name "customProperties" -}} {{- $needsUtils = true -}} {{- end -}}
 	{{- if eq .Name "id" -}} {{- $hasID = true -}} {{- end -}}
 {{- end }}
 
@@ -37,24 +37,10 @@ func {{ $operationGroup }}Schema() map[string]*schema.Schema {
 					{{- if .Default }}
 			Default: {{ .Default }},
 						{{- end }}
-					{{- else if eq .GoType "float64" }}
-			Type: schema.TypeFloat,
-					{{- else if eq .GoType "float32" }}
-			Type: schema.TypeFloat,
 					{{- else if eq .GoType "int64" }}
 			Type: schema.TypeInt,
 					{{- else if eq .GoType "int32" }}
 			Type: schema.TypeInt,
-					{{- else if eq .GoType "int" }}
-			Type: schema.TypeInt,
-					{{- else if eq .GoType "uint64" }}
-			Type: schema.TypeInt,
-					{{- else if eq .GoType "uint32" }}
-			Type: schema.TypeInt,
-					{{- else if eq .GoType "[]string" }}
-			Type: schema.TypeSet,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Set:      schema.HashString,
 					{{- else if eq .GoType "interface{}" }}
 			Type: schema.TypeMap, //GoType: {{ .GoType }}
 			Elem: &schema.Schema{
@@ -96,6 +82,8 @@ func DataSource{{ $operationGroup }}Schema() map[string]*schema.Schema {
 		"{{ snakize .Name }}": {
 				{{- if (eq .Name "id") }}
 			Type: schema.TypeString,
+			Computed: true,
+			Optional: true,
 				{{- else }}
 					{{- if eq .GoType "string" }}
 			Type: schema.TypeString,
@@ -107,24 +95,10 @@ func DataSource{{ $operationGroup }}Schema() map[string]*schema.Schema {
 					{{- if .Default }}
 			Default: {{ .Default }},
 						{{- end }}
-					{{- else if eq .GoType "float64" }}
-			Type: schema.TypeFloat,
-					{{- else if eq .GoType "float32" }}
-			Type: schema.TypeFloat,
 					{{- else if eq .GoType "int64" }}
 			Type: schema.TypeInt,
 					{{- else if eq .GoType "int32" }}
 			Type: schema.TypeInt,
-					{{- else if eq .GoType "int" }}
-			Type: schema.TypeInt,
-					{{- else if eq .GoType "uint64" }}
-			Type: schema.TypeInt,
-					{{- else if eq .GoType "uint32" }}
-			Type: schema.TypeInt,
-					{{- else if eq .GoType "[]string" }}
-			Type: schema.TypeSet,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Set:      schema.HashString,
 					{{- else if eq .GoType "interface{}" }}
 			Type: schema.TypeMap, //GoType: {{ .GoType }}
 			Elem: &schema.Schema{
@@ -147,8 +121,8 @@ func DataSource{{ $operationGroup }}Schema() map[string]*schema.Schema {
 				{{- end }}
 		},
 		{{ end }}
-		"filter": {
-			Type:     schema.TypeString,
+		"filter": { {{/* all of LM's GetList endpoints support a filter parameter for, well, filtering! Check our endpoint filtering documentation below */}}
+			Type:     schema.TypeString, {{/* https://www.logicmonitor.com/support/rest-api-developers-guide/v1/devices/get-devices */}}
             Optional: true,
 		},
 	}
@@ -199,36 +173,21 @@ func {{ $operationGroup }}Model(d *schema.ResourceData) *models.{{ $operationGro
 		{{- if or (not .ReadOnly) (and (eq .Name "id") (not $isReadOnlyModel)) }}
 			{{- if (eq .Name "id") }}
 	id, _ := strconv.Atoi(d.Get("id").(string))
-
 			{{- else if .IsComplexObject }}
-	var {{ varname .Name }} *models.{{ pascalize .GoType }} = nil
+	var {{ varname .Name }} *models.{{ pascalize .GoType }} = nil//hit complex
 	{{ .Name }}Interface, {{ .Name }}IsSet := d.GetOk("{{ snakize .Name }}")
 	if {{ .Name }}IsSet {
 		{{ .Name }}Map := {{ .Name }}Interface.([]interface{})[0].(map[string]interface{})
 		{{ varname .Name }} = {{ .GoType }}Model({{ .Name }}Map)
 	}
-			
 			{{- else if stringContains .Name "Properties" }}
 	{{ varname .Name }} := utils.GetPropertiesFromResource(d, "{{ snakize .Name }}")
-
-			{{- else if eq .Name "collectors" }}
-	{{ varname .Name }} := utils.GetCloudCollectorConfigs(d)
-			
-			{{- else if eq .Name "tags" }}
-	{{ varname .Name }} := utils.GetCloudTagFilters(d)
-			
 			{{- else if eq .GoType "interface{}" }}
 	{{ varname .Name }} := d.Get("{{ snakize .Name }}")
-
 			{{- else if or (eq .GoType "int32") ( eq .GoType "int64") }}
 	{{ varname .Name }} := {{ .GoType }}(d.Get("{{ snakize .Name }}").(int))
-
-			{{- else if eq .GoType "[]string" }}
-	{{ varname .Name }} := utils.ConvertSetToStringSlice(d.Get("{{ snakize .Name }}").(*schema.Set))
-
 			{{- else if and (not (eq .GoType "string")) (not (eq .GoType "[]string")) (not (eq .GoType "bool")) (not (eq .GoType "int")) (not (eq .GoType "float32")) (not (eq .GoType "float64")) (not (eq .GoType "uint32")) (not (eq .GoType "uint64")) }}
 	{{ varname .Name }} := d.Get("{{ snakize .Name }}").({{ if hasPrefix .GoType "[]" }}[]{{ end }}*models.{{ pascalize .GoType }})
-
 			{{- else }}
 	{{ varname .Name }} := d.Get("{{ snakize .Name }}").({{ .GoType }})
 			{{- end }}

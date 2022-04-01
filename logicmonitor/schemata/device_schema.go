@@ -332,7 +332,9 @@ func DataSourceDeviceSchema() map[string]*schema.Schema {
 		},
 
 		"id": {
-			Type: schema.TypeString,
+			Type:     schema.TypeString,
+			Computed: true,
+			Optional: true,
 		},
 
 		"inherited_properties": {

@@ -1,3 +1,6 @@
+{{/* This template was copied from go-swagger/generator/templates/client/parameter.gotmpl 
+ It is mostly identical to the original file but has had some unneeded methods removed 
+ If you apply our framework to your own API, you may want to try pointing to the original parameter.gotmpl */}}
 {{- define "clientresponse" }}
 // New{{ pascalize .Name }} creates a {{ pascalize .Name }} with default headers values
 func New{{ pascalize .Name }}({{ if eq .Code -1 }}code int{{ end }}{{ if .Schema }}{{ if and (eq .Code -1) .Schema.IsStream }}, {{end}}{{ if .Schema.IsStream }}writer io.Writer{{ end }}{{ end }}) *{{ pascalize .Name }} {
