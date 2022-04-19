@@ -1,0 +1,701 @@
+{
+          "basePath": "/santaba/rest",
+          "definitions": {
+                    "Device": {
+                              "example": "isResource",
+                              "properties": {
+                                        "autoBalancedCollectorGroupId": {
+                                                  "description": "The Auto Balanced Collector Group id. 0 means not monitored by ABCG",
+                                                  "example": 0,
+                                                  "format": "int32",
+                                                  "type": "integer"
+                                        },
+                                        "autoProperties": {
+                                                  "description": "Any auto properties assigned to the device",
+                                                  "items": {
+                                                            "$ref": "#/definitions/NameAndValue"
+                                                  },
+                                                  "readOnly": true,
+                                                  "type": "array"
+                                        },
+                                        "autoPropsAssignedOn": {
+                                                  "description": "The time, in epoch seconds format, that properties were first discovered for this device",
+                                                  "format": "int64",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "autoPropsUpdatedOn": {
+                                                  "description": "The time, in epoch seconds, that auto properties last ran and updated the properties table for this device",
+                                                  "format": "int64",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "awsState": {
+                                                  "description": "The AWS instance state (if applicable): 1 indicates that the instance is running, 2 indicates that the instance is stopped and 3 the instance is terminated",
+                                                  "format": "int32",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "azureState": {
+                                                  "description": "The GCP instance state (if applicable): 1 indicates that the instance is running, 2 indicates that the instance is stopped and 3 the instance is terminated.",
+                                                  "format": "int32",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "collectorDescription": {
+                                                  "description": "The description/name of the collector for this device",
+                                                  "readOnly": true,
+                                                  "type": "string"
+                                        },
+                                        "createdOn": {
+                                                  "description": "The time, in epoch seconds format, that the device was added to your LogicMonitor account",
+                                                  "format": "int64",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "currentCollectorId": {
+                                                  "description": "The id of the collector currently monitoring the device and discovering instances",
+                                                  "example": 1,
+                                                  "format": "int32",
+                                                  "type": "integer"
+                                        },
+                                        "customProperties": {
+                                                  "description": "Any non-system properties (aside from system.categories) defined for this device",
+                                                  "items": {
+                                                            "$ref": "#/definitions/NameAndValue"
+                                                  },
+                                                  "type": "array"
+                                        },
+                                        "deletedTimeInMs": {
+                                                  "description": "The time in milliseconds that the device has been dead for, or since the AWS device was filtered out",
+                                                  "format": "int64",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "description": {
+                                                  "description": "The device description",
+                                                  "example": "This is a Cisco Router",
+                                                  "type": "string"
+                                        },
+                                        "deviceType": {
+                                                  "description": "The type of device: 0 indicates a regular device, 2 indicates an AWS device, 4 indicates an Azure device",
+                                                  "example": 0,
+                                                  "format": "int32",
+                                                  "type": "integer"
+                                        },
+                                        "disableAlerting": {
+                                                  "description": "Indicates whether alerting is disabled (true) or enabled (false) for this device",
+                                                  "example": true,
+                                                  "type": "boolean"
+                                        },
+                                        "displayName": {
+                                                  "description": "The display name of the device",
+                                                  "example": "Cisco Router",
+                                                  "type": "string"
+                                        },
+                                        "enableNetflow": {
+                                                  "description": "Indicates whether Netflow is enabled (true) or disabled (false) for the device",
+                                                  "example": true,
+                                                  "type": "boolean"
+                                        },
+                                        "gcpState": {
+                                                  "description": "The Azure instance state (if applicable): 1 indicates that the instance is running, 2 indicates that the instance is stopped and 3 the instance is terminated.",
+                                                  "format": "int32",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "hostGroupIds": {
+                                                  "description": "The Id(s) of the groups the device is in, where multiple group ids are comma separated",
+                                                  "example": "16,4,3",
+                                                  "type": "string"
+                                        },
+                                        "hostStatus": {
+                                                  "description": "The status of this device, where possible statuses are normal, dead and dead-collector",
+                                                  "readOnly": true,
+                                                  "type": "string"
+                                        },
+                                        "id": {
+                                                  "description": "The Id of the device",
+                                                  "format": "int32",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "inheritedProperties": {
+                                                  "description": "Any properties inherit from parents",
+                                                  "items": {
+                                                            "$ref": "#/definitions/NameAndValue"
+                                                  },
+                                                  "readOnly": true,
+                                                  "type": "array"
+                                        },
+                                        "lastDataTime": {
+                                                  "description": "The last time, in epoch seconds, that the device received Netflow data",
+                                                  "format": "int64",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "lastRawdataTime": {
+                                                  "description": "The last time, in epoch seconds, that raw Netflow data was reported",
+                                                  "format": "int64",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "link": {
+                                                  "description": "The URL link associated with the device",
+                                                  "example": "www.ciscorouter.com",
+                                                  "type": "string"
+                                        },
+                                        "name": {
+                                                  "description": "The host name or IP address of the device",
+                                                  "example": "collector.localhost",
+                                                  "type": "string"
+                                        },
+                                        "netflowCollectorDescription": {
+                                                  "description": "The description/name of the netflow collector for this device",
+                                                  "readOnly": true,
+                                                  "type": "string"
+                                        },
+                                        "netflowCollectorGroupId": {
+                                                  "description": "The id of the Collector Group associated with the device's netflow collector",
+                                                  "format": "int32",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "netflowCollectorGroupName": {
+                                                  "description": "The name of the Collector Group associated with the device's netflow collector",
+                                                  "readOnly": true,
+                                                  "type": "string"
+                                        },
+                                        "netflowCollectorId": {
+                                                  "description": "The Id of the netflow collector associated with the device",
+                                                  "example": 1,
+                                                  "format": "int32",
+                                                  "type": "integer"
+                                        },
+                                        "preferredCollectorGroupId": {
+                                                  "description": "The id of the Collector Group associated with the device's preferred collector",
+                                                  "format": "int32",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "preferredCollectorGroupName": {
+                                                  "description": "The name of the Collector Group associated with the device's preferred collector",
+                                                  "readOnly": true,
+                                                  "type": "string"
+                                        },
+                                        "preferredCollectorId": {
+                                                  "description": "The Id of the preferred collector assigned to monitor the device",
+                                                  "example": 2,
+                                                  "format": "int32",
+                                                  "type": "integer"
+                                        },
+                                        "relatedDeviceId": {
+                                                  "description": "The Id of the AWS EC2 instance related to this device, if one exists in the LogicMonitor account. This value defaults to -1, which indicates that there are no related devices",
+                                                  "example": -1,
+                                                  "format": "int32",
+                                                  "type": "integer"
+                                        },
+                                        "scanConfigId": {
+                                                  "description": "The Id of the netscan configuration which was used to discover this device. 0 indicates that the device was not discovered by a scan",
+                                                  "example": 0,
+                                                  "format": "int32",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "systemProperties": {
+                                                  "description": "Any system properties (aside from system.categories) defined for this device",
+                                                  "items": {
+                                                            "$ref": "#/definitions/NameAndValue"
+                                                  },
+                                                  "readOnly": true,
+                                                  "type": "array"
+                                        },
+                                        "toDeleteTimeInMs": {
+                                                  "description": "The number of milliseconds until the device will be automatically deleted from your LogicMonitor account (a value of zero indicates that a future delete time/date has not been scheduled)",
+                                                  "format": "int64",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "upTimeInSeconds": {
+                                                  "description": "The uptime of the device in seconds. This value will always be the largest value reported by the following datasources:\nHost Uptime-\nSNMPUptime-\nSNMP_Engine_Uptime-\nWinSystemUptime-\nNimbleUptime-",
+                                                  "format": "int64",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "updatedOn": {
+                                                  "description": "The time, in epoch seconds format, that the device was last updated",
+                                                  "format": "int64",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "userPermission": {
+                                                  "description": "The read and/or write permissions for this device that are granted to the user who made the API request",
+                                                  "readOnly": true,
+                                                  "type": "string"
+                                        }
+                              },
+                              "required": [
+                                        "displayName",
+                                        "name",
+                                        "preferredCollectorId"
+                              ],
+                              "type": "object"
+                    },
+                    "DevicePaginationResponse": {
+                              "properties": {
+                                        "items": {
+                                                  "items": {
+                                                            "$ref": "#/definitions/Device"
+                                                  },
+                                                  "type": "array"
+                                        },
+                                        "searchId": {
+                                                  "readOnly": true,
+                                                  "type": "string"
+                                        },
+                                        "total": {
+                                                  "format": "int32",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        }
+                              },
+                              "type": "object"
+                    },
+                    "ErrorResponse": {
+                              "properties": {
+                                        "errorCode": {
+                                                  "description": "The error code",
+                                                  "format": "int32",
+                                                  "readOnly": true,
+                                                  "type": "integer"
+                                        },
+                                        "errorDetail": {
+                                                  "description": "The error detail",
+                                                  "readOnly": true,
+                                                  "type": "object"
+                                        },
+                                        "errorMessage": {
+                                                  "description": "The error message",
+                                                  "readOnly": true,
+                                                  "type": "string"
+                                        }
+                              },
+                              "type": "object"
+                    },
+                    "NameAndValue": {
+                              "properties": {
+                                        "name": {
+                                                  "description": "The name of a property",
+                                                  "example": "addr",
+                                                  "type": "string"
+                                        },
+                                        "value": {
+                                                  "description": "The value of a property",
+                                                  "example": "127.0.0.1",
+                                                  "type": "string"
+                                        }
+                              },
+                              "required": [
+                                        "name",
+                                        "value"
+                              ],
+                              "type": "object"
+                    }
+          },
+          "externalDocs": {
+                    "description": "LogicMonitor Support Docs",
+                    "url": "https://www.logicmonitor.com/support/rest-api-developers-guide/"
+          },
+          "info": {
+                    "description": "LogicMonitor is a SaaS-based performance monitoring platform that provides full visibility into complex, hybrid infrastructures, offering granular performance monitoring and actionable data and insights. logicmonitor_sdk enables you to manage your LogicMonitor account programmatically.",
+                    "license": {
+                              "name": "Apache 2.0",
+                              "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+                    },
+                    "title": "LogicMonitor REST API",
+                    "version": "2.0.0"
+          },
+          "paths": {
+                    "/device/devices": {
+                              "get": {
+                                        "description": "",
+                                        "operationId": "getDeviceList",
+                                        "parameters": [
+                                                  {
+                                                            "default": 0,
+                                                            "format": "int32",
+                                                            "in": "query",
+                                                            "name": "offset",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "default": 50,
+                                                            "format": "int32",
+                                                            "in": "query",
+                                                            "name": "size",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "format": "int64",
+                                                            "in": "query",
+                                                            "name": "end",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "format": "int64",
+                                                            "in": "query",
+                                                            "name": "start",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "in": "query",
+                                                            "name": "fields",
+                                                            "required": false,
+                                                            "type": "string"
+                                                  },
+                                                  {
+                                                            "in": "query",
+                                                            "name": "filter",
+                                                            "required": false,
+                                                            "type": "string"
+                                                  },
+                                                  {
+                                                            "in": "query",
+                                                            "name": "netflowFilter",
+                                                            "required": false,
+                                                            "type": "string"
+                                                  }
+                                        ],
+                                        "produces": [
+                                                  "application/json"
+                                        ],
+                                        "responses": {
+                                                  "200": {
+                                                            "description": "successful operation",
+                                                            "schema": {
+                                                                      "$ref": "#/definitions/DevicePaginationResponse"
+                                                            }
+                                                  },
+                                                  "default": {
+                                                            "description": "Error",
+                                                            "schema": {
+                                                                      "$ref": "#/definitions/ErrorResponse"
+                                                            }
+                                                  }
+                                        },
+                                        "security": [
+                                                  {
+                                                            "LMv1": []
+                                                  }
+                                        ],
+                                        "summary": "get device list",
+                                        "tags": [
+                                                  "Device"
+                                        ]
+                              },
+                              "post": {
+                                        "consumes": [
+                                                  "application/json"
+                                        ],
+                                        "description": "",
+                                        "operationId": "addDevice",
+                                        "parameters": [
+                                                  {
+                                                            "default": false,
+                                                            "in": "query",
+                                                            "name": "addFromWizard",
+                                                            "required": false,
+                                                            "type": "boolean"
+                                                  },
+                                                  {
+                                                            "format": "int64",
+                                                            "in": "query",
+                                                            "name": "end",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "format": "int64",
+                                                            "in": "query",
+                                                            "name": "start",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "in": "body",
+                                                            "name": "body",
+                                                            "required": true,
+                                                            "schema": {
+                                                                      "$ref": "#/definitions/Device"
+                                                            }
+                                                  },
+                                                  {
+                                                            "in": "query",
+                                                            "name": "netflowFilter",
+                                                            "required": false,
+                                                            "type": "string"
+                                                  }
+                                        ],
+                                        "produces": [
+                                                  "application/json"
+                                        ],
+                                        "responses": {
+                                                  "200": {
+                                                            "description": "successful operation",
+                                                            "schema": {
+                                                                      "$ref": "#/definitions/Device"
+                                                            }
+                                                  },
+                                                  "default": {
+                                                            "description": "Error",
+                                                            "schema": {
+                                                                      "$ref": "#/definitions/ErrorResponse"
+                                                            }
+                                                  }
+                                        },
+                                        "security": [
+                                                  {
+                                                            "LMv1": []
+                                                  }
+                                        ],
+                                        "summary": "add a new device",
+                                        "tags": [
+                                                  "Device"
+                                        ]
+                              }
+                    },
+                    "/device/devices/{id}": {
+                              "delete": {
+                                        "description": "",
+                                        "operationId": "deleteDeviceById",
+                                        "parameters": [
+                                                  {
+                                                            "default": true,
+                                                            "in": "query",
+                                                            "name": "deleteHard",
+                                                            "required": false,
+                                                            "type": "boolean"
+                                                  },
+                                                  {
+                                                            "format": "int32",
+                                                            "in": "path",
+                                                            "name": "id",
+                                                            "pattern": "\\d+",
+                                                            "required": true,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "format": "int64",
+                                                            "in": "query",
+                                                            "name": "end",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "format": "int64",
+                                                            "in": "query",
+                                                            "name": "start",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "in": "query",
+                                                            "name": "netflowFilter",
+                                                            "required": false,
+                                                            "type": "string"
+                                                  }
+                                        ],
+                                        "produces": [
+                                                  "application/json"
+                                        ],
+                                        "responses": {
+                                                  "200": {
+                                                            "description": "successful operation",
+                                                            "schema": {
+                                                                      "type": "object"
+                                                            }
+                                                  },
+                                                  "default": {
+                                                            "description": "Error",
+                                                            "schema": {
+                                                                      "$ref": "#/definitions/ErrorResponse"
+                                                            }
+                                                  }
+                                        },
+                                        "security": [
+                                                  {
+                                                            "LMv1": []
+                                                  }
+                                        ],
+                                        "summary": "delete a device",
+                                        "tags": [
+                                                  "Device"
+                                        ]
+                              },
+                              "get": {
+                                        "description": "",
+                                        "operationId": "getDeviceById",
+                                        "parameters": [
+                                                  {
+                                                            "format": "int32",
+                                                            "in": "path",
+                                                            "name": "id",
+                                                            "pattern": "\\d+",
+                                                            "required": true,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "format": "int64",
+                                                            "in": "query",
+                                                            "name": "end",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "format": "int64",
+                                                            "in": "query",
+                                                            "name": "start",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "in": "query",
+                                                            "name": "fields",
+                                                            "required": false,
+                                                            "type": "string"
+                                                  },
+                                                  {
+                                                            "in": "query",
+                                                            "name": "netflowFilter",
+                                                            "required": false,
+                                                            "type": "string"
+                                                  }
+                                        ],
+                                        "produces": [
+                                                  "application/json"
+                                        ],
+                                        "responses": {
+                                                  "200": {
+                                                            "description": "successful operation",
+                                                            "schema": {
+                                                                      "$ref": "#/definitions/Device"
+                                                            }
+                                                  },
+                                                  "default": {
+                                                            "description": "Error",
+                                                            "schema": {
+                                                                      "$ref": "#/definitions/ErrorResponse"
+                                                            }
+                                                  }
+                                        },
+                                        "security": [
+                                                  {
+                                                            "LMv1": []
+                                                  }
+                                        ],
+                                        "summary": "get device by id",
+                                        "tags": [
+                                                  "Device"
+                                        ]
+                              },
+                              "put": {
+                                        "consumes": [
+                                                  "application/json"
+                                        ],
+                                        "description": "",
+                                        "operationId": "updateDevice",
+                                        "parameters": [
+                                                  {
+                                                            "default": "refresh",
+                                                            "in": "query",
+                                                            "name": "opType",
+                                                            "required": false,
+                                                            "type": "string"
+                                                  },
+                                                  {
+                                                            "format": "int32",
+                                                            "in": "path",
+                                                            "name": "id",
+                                                            "pattern": "\\d+",
+                                                            "required": true,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "format": "int64",
+                                                            "in": "query",
+                                                            "name": "end",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "format": "int64",
+                                                            "in": "query",
+                                                            "name": "start",
+                                                            "required": false,
+                                                            "type": "integer"
+                                                  },
+                                                  {
+                                                            "in": "body",
+                                                            "name": "body",
+                                                            "required": true,
+                                                            "schema": {
+                                                                      "$ref": "#/definitions/Device"
+                                                            }
+                                                  },
+                                                  {
+                                                            "in": "query",
+                                                            "name": "netflowFilter",
+                                                            "required": false,
+                                                            "type": "string"
+                                                  }
+                                        ],
+                                        "produces": [
+                                                  "application/json"
+                                        ],
+                                        "responses": {
+                                                  "200": {
+                                                            "description": "successful operation",
+                                                            "schema": {
+                                                                      "$ref": "#/definitions/Device"
+                                                            }
+                                                  },
+                                                  "default": {
+                                                            "description": "Error",
+                                                            "schema": {
+                                                                      "$ref": "#/definitions/ErrorResponse"
+                                                            }
+                                                  }
+                                        },
+                                        "security": [
+                                                  {
+                                                            "LMv1": []
+                                                  }
+                                        ],
+                                        "summary": "update a device",
+                                        "tags": [
+                                                  "Device"
+                                        ]
+                              }
+                    }
+          },
+          "schemes": [
+                    "https"
+          ],
+          "securityDefinitions": {
+                    "LMv1": {
+                              "in": "header",
+                              "name": "Authorization",
+                              "type": "apiKey"
+                    }
+          },
+          "swagger": "2.0",
+          "tags": [
+                    {
+                              "name": "Device"
+                    }
+          ]
+}

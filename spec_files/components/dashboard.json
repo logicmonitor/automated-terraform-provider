@@ -1,0 +1,432 @@
+{
+    "definitions": {
+        "Dashboard": {
+            "example": "isResource",
+            "properties": {
+                "description": {
+                    "description": "The description of the dashboard",
+                    "example": "Windows Servers Performance",
+                    "type": "string"
+                },
+                "fullName": {
+                    "description": "Full name of the dashboard, including group path",
+                    "example": "a new group//Collector Health/",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "groupFullPath": {
+                    "description": "The full path (excluding root group) of the group the dashboard belongs to",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "groupId": {
+                    "description": "The id of the group the dashboard belongs to",
+                    "example": 1,
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "groupName": {
+                    "description": "The name of group where created dashboard will reside",
+                    "example": "Server Dashboard",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "The Id of the dashboard",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "The name of the dashboard",
+                    "example": "Default Device Group",
+                    "type": "string"
+                },
+                "owner": {
+                    "description": "This field will be empty unless the dashboard is a private dashboard, in which case the owner will be listed",
+                    "type": "string"
+                },
+                "sharable": {
+                    "description": "Whether or not the dashboard is sharable. This value will always be true unless the dashboard is a private dashboard",
+                    "example": true,
+                    "type": "boolean"
+                },
+                "template": {
+                    "description": "The template which is used for import dashboard",
+                    "type": "object"
+                },
+                "userPermission": {
+                    "description": "The permission of the user that made the API call",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "widgetsConfig": {
+                    "description": "Information about widget configuration used by the UI",
+                    "type": "object"
+                },
+                "widgetTokens": {
+                    "description": "If useDynamicWidget=true, this field must at least contain tokens defaultDeviceGroup and defaultServiceGroup",
+                    "example": "\"widgetTokens\":[{\"name\":\"defaultDeviceGroup\",\"value\":\"*\"},{\"name\":\"defaultServiceGroup\",\"value\":\"*\"}]",
+                    "items": {
+                        "$ref": "#/definitions/WidgetToken"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
+        "DashboardPaginationResponse": {
+            "properties": {
+                "items": {
+                    "items": {
+                        "$ref": "#/definitions/Dashboard"
+                    },
+                    "type": "array"
+                },
+                "searchId": {
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "total": {
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "ErrorResponse": {
+            "properties": {
+                "errorCode": {
+                    "description": "The error code",
+                    "format": "int32",
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "errorDetail": {
+                    "description": "The error detail",
+                    "readOnly": true,
+                    "type": "object"
+                },
+                "errorMessage": {
+                    "description": "The error message",
+                    "readOnly": true,
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "WidgetToken": {
+            "properties": {
+                "inheritList": {
+                    "items": {
+                        "$ref": "#/definitions/WidgetTokenInheritance"
+                    },
+                    "type": "array"
+                },
+                "name": {
+                    "description": "This is the name of the parent group of devices, if there is one established",
+                    "example": "Default Device Group",
+                    "type": "string"
+                },
+                "type": {
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "value": {
+                    "description": "this is the name of the child group of devices, if there is one",
+                    "example": "Devices by Type/Network",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "WidgetTokenInheritance": {
+            "properties": {
+                "fullpath": {
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "value": {
+                    "readOnly": true,
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "paths": {
+        "/dashboard/dashboards": {
+            "get": {
+                "description": "",
+                "operationId": "getDashboardList",
+                "parameters": [
+                    {
+                        "default": 0,
+                        "format": "int32",
+                        "in": "query",
+                        "name": "offset",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "default": 50,
+                        "format": "int32",
+                        "in": "query",
+                        "name": "size",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "fields",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filter",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/DashboardPaginationResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "get dashboard list",
+                "tags": [
+                    "Dashboard"
+                ]
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "description": "",
+                "operationId": "addDashboard",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Dashboard"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Dashboard"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "add dashboard",
+                "tags": [
+                    "Dashboard"
+                ]
+            }
+        },
+        "/dashboard/dashboards/{id}": {
+            "delete": {
+                "description": "",
+                "operationId": "deleteDashboardById",
+                "parameters": [
+                    {
+                        "format": "int32",
+                        "in": "path",
+                        "name": "id",
+                        "pattern": "\\d+",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "delete dashboard",
+                "tags": [
+                    "Dashboard"
+                ]
+            },
+            "get": {
+                "description": "",
+                "operationId": "getDashboardById",
+                "parameters": [
+                    {
+                        "default": "json",
+                        "in": "query",
+                        "name": "format",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "default": false,
+                        "in": "query",
+                        "name": "template",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "format": "int32",
+                        "in": "path",
+                        "name": "id",
+                        "pattern": "\\d+",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "fields",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Dashboard"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "get dashboard",
+                "tags": [
+                    "Dashboard"
+                ]
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "description": "The template field works only for the POST API",
+                "operationId": "updateDashboardById",
+                "parameters": [
+                    {
+                        "default": false,
+                        "in": "query",
+                        "name": "overwriteGroupFields",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "format": "int32",
+                        "in": "path",
+                        "name": "id",
+                        "pattern": "\\d+",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Dashboard"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Dashboard"
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "LMv1": []
+                    }
+                ],
+                "summary": "update dashboard",
+                "tags": [
+                    "Dashboard"
+                ]
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Dashboard"
+        }
+    ]
+}
