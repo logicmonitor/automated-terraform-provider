@@ -5,7 +5,7 @@
 <img src="https://www.datocms-assets.com/2885/1629941242-logo-terraform-main.svg" width="600px">
 <br></br>
 
-This is the companion code to our **How to Write a Custom Terraform Provider Automatically with OpenAPI** article.
+This is the companion code to our [**How to Write a Custom Terraform Provider Automatically With OpenAPI**](http://logicmonitor.com/blog/how-to-write-a-custom-terraform-provider-automatically-with-openapi) article.
 
 Learn more by checking out the article!
 
@@ -16,7 +16,7 @@ Learn more by checking out the article!
 -   [Go-Swagger](https://goswagger.io/install.html) v0.27.0+ (to generate the code)
 
 ## Building the Provider
-Clone repository:
+Clone repository (here, using SSH):
 ```sh
 $ git clone git@github.com:logicmonitor/automated-terraform-provider.git
 ```
@@ -25,7 +25,7 @@ Enter the provider directory and build the provider:
 $ cd automated-terraform-provider/
 $ make
 ```
-The make file will then generate the code, build the binary, and copy it to the Terraform plugin directory.
+The Makefile will then generate the code, build the binary, and copy it to the Terraform plugin directory.
 
 ## Using the provider
 
@@ -45,4 +45,4 @@ provider "logicmonitor" {
   company = var.logicmonitor_company
 }
 ```
-Test cases can be found in the `/automated-terraform-provider/test` directory.
+Test cases can be found in the `/automated-terraform-provider/Test` directory.
